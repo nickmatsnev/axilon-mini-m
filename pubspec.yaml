@@ -1,0 +1,151 @@
+name: axilon_m
+description: "A new Flutter project."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.1
+
+dependencies:
+  flutter_secure_storage: ^9.2.2
+  phone_state: ^2.1.1
+  flutter_screenutil: ^5.0.0
+  flutter_foreground_task: ^8.17.0
+  permission_handler: ^11.0.1
+  http: ^1.2.0
+  provider: ^6.1.2
+  intl_phone_field: ^3.2.0
+  pin_code_fields: ^8.0.1
+  just_audio: ^0.9.28 # For playing audio files
+  google_fonts: ^6.2.1
+  google_maps_flutter: ^2.10.0
+  flutter_map: ^8.1.1
+  latlong2: ^0.9.1
+  flutter_animate: ^4.5.0
+  audio_session: ^0.1.23
+  fl_chart: ^0.70.1
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  shared_preferences: ^2.3.4
+  flutter_chat_ui: ^1.6.15
+  flutter_chat_types: ^3.6.2
+  uuid: ^4.5.1
+  audioplayers: ^6.4.0
+  firebase_messaging: ^15.2.0
+  firebase_auth: ^5.4.1
+  firebase_core: ^3.10.1
+  intl: ^0.20.2
+  flutter_svg: ^2.0.17
+  speech_to_text: ^7.0.0
+  flutter_contacts: ^1.1.9+2
+  url_launcher: ^6.3.1
+  record: ^6.0.0
+  file_picker: ^10.0.0
+  http_parser: ^4.1.2
+  flutter_sound: ^9.24.4
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/a2.png
+    - assets/eva.png
+    - assets/max.jpg
+    - assets/butler.jpg
+    - assets/genie.jpg
+    - assets/genie.wav
+    - assets/butler.wav
+    - assets/max.wav
+    - assets/eva.wav
+    - assets/i18n/en.json
+    - assets/i18n/es.json
+    - assets/i18n/fr.json
+    - assets/i18n/cs.json
+    - assets/i18n/de.json
+    - assets/i18n/ru.json
+    - assets/i18n/el.json
+    - assets/i18n/fa.json
+    - assets/ChatIcon.svg
+    - assets/icons/TasksIcon.svg
+    - assets/icons/VoiceMailIcon.svg
+
+  fonts:
+    - family: DrukCondLCG
+      fonts:
+        - asset: assets/fonts/drukFonts/DrukCondLCG-Super.ttf
+          weight: 900
+        - asset: assets/fonts/drukFonts/DrukCondLCG-SuperItalic.ttf
+          weight: 900
+          style: italic
+    - family: DrukLCG
+      fonts:
+        - asset: assets/fonts/drukFonts/DrukLCG-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/drukFonts/DrukLCG-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/drukFonts/DrukLCG-Heavy.ttf
+          weight: 800
+        - asset: assets/fonts/drukFonts/DrukLCG-HeavyItalic.ttf
+          weight: 800
+          style: italic
+        - asset: assets/fonts/drukFonts/DrukLCG-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/drukFonts/DrukLCG-MediumItalic.ttf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/drukFonts/DrukLCG-Super.ttf
+          weight: 900
+        - asset: assets/fonts/drukFonts/DrukLCG-SuperItalic.ttf
+          weight: 900
+          style: italic
+    - family: DrukTextLCG
+      fonts:
+        - asset: assets/fonts/drukFonts/DrukTextLCG-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/drukFonts/DrukTextLCG-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/drukFonts/DrukTextLCG-Heavy.ttf
+          weight: 800
+        - asset: assets/fonts/drukFonts/DrukTextLCG-HeavyItalic.ttf
+          weight: 800
+          style: italic
+        - asset: assets/fonts/drukFonts/DrukTextLCG-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/drukFonts/DrukTextLCG-MediumItalic.ttf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/drukFonts/DrukTextLCG-Super.ttf
+          weight: 900
+        - asset: assets/fonts/drukFonts/DrukTextLCG-SuperItalic.ttf
+          weight: 900
+          style: italic
+    - family: DrukTextWideLCG
+      fonts:
+        - asset: assets/fonts/drukFonts/DrukTextWideLCG-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/drukFonts/DrukTextWideLCG-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/drukFonts/DrukTextWideLCG-Heavy.ttf
+          weight: 800
+        - asset: assets/fonts/drukFonts/DrukTextWideLCG-HeavyItalic.ttf
+          weight: 800
+          style: italic
+        - asset: assets/fonts/drukFonts/DrukTextWideLCG-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/drukFonts/DrukTextWideLCG-MediumItalic.ttf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/drukFonts/DrukTextWideLCG-Super.ttf
+          weight: 900
+        - asset: assets/fonts/drukFonts/DrukTextWideLCG-SuperItalic.ttf
+          weight: 900
+          style: italic
