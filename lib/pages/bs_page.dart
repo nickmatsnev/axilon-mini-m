@@ -103,7 +103,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     try {
       final agentResponse = await http.post(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/agents/my-agent'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/agents/my-agent'),
         headers: {
           'Authorization': 'Bearer ${authProvider.token}',
           'Content-Type': 'application/json',
@@ -130,7 +130,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     setState(() => _isLoading = true);
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     try {
-      final url = Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/chats/create');
+      final url = Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/chats/create');
       final resp = await http.post(
         url,
         headers: {
@@ -156,7 +156,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
           }
           _isLoading = false;
         });
-        final readUrl = Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/$_userId/setRead');
+        final readUrl = Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/$_userId/setRead');
         await http.get(readUrl, headers: {'Authorization': 'Bearer ${authProvider.token}'});
       } else {
         setState(() => _isLoading = false);
@@ -171,7 +171,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     try {
       final resp = await http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/$_userId/delete-chat'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/$_userId/delete-chat'),
         headers: {'Authorization': 'Bearer ${authProvider.token}'},
       );
       if (resp.statusCode == 200) {
@@ -206,7 +206,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     late Map<String, dynamic> data;
     try {
       final resp = await http.post(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/chats/messages'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/chats/messages'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${authProvider.token}',
@@ -267,7 +267,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     try {
       final resp = await http.post(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/tasks/taskFromChat'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/tasks/taskFromChat'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${authProvider.token}',
@@ -290,7 +290,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     try {
       final resp = await http.post(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/chats/updateChat'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/chats/updateChat'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${authProvider.token}',
@@ -313,7 +313,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     try {
       final resp = await http.post(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/chats/updateAssistant'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/chats/updateAssistant'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${authProvider.token}',
@@ -336,7 +336,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     try {
       final resp = await http.post(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/chats/phoneLogsChat'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/chats/phoneLogsChat'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${authProvider.token}',
@@ -359,7 +359,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     try {
       final resp = await http.post(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/chats/chitChat'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/chats/chitChat'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${authProvider.token}',
@@ -382,7 +382,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     try {
       final resp = await http.post(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/chat-messages'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/chat-messages'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${authProvider.token}',
@@ -463,7 +463,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
   Future<void> _reactToMessage(String id, String reaction) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final url = Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/chat-messages/$id/${reaction == 'like' ? 'like' : 'dislike'}');
+    final url = Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/chat-messages/$id/${reaction == 'like' ? 'like' : 'dislike'}');
     try {
       final resp = await http.put(url, headers: {
         'Authorization': 'Bearer ${authProvider.token}',

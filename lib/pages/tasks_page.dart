@@ -151,7 +151,7 @@ class _TasksPageState extends State<TasksPage> {
 
     try {
       final response = await http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/$userId/tasks'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/$userId/tasks'),
         headers: {
           'Authorization': 'Bearer ${authProvider.token}',
         },

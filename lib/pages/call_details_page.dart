@@ -67,7 +67,7 @@ class _CallDetailsPageState extends State<CallDetailsPage> {
     setState(() => _isMarkingRead = true);
     try {
       final url = Uri.parse(
-        'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/phone-calls/$callId/setRead',
+        'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/phone-calls/$callId/setRead',
       );
       await http.get(
         url,

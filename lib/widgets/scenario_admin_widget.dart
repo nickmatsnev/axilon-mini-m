@@ -28,7 +28,7 @@ class _ScenarioAdminWidgetState extends State<ScenarioAdminWidget> {
     final token = Provider.of<AuthProvider>(context, listen: false).token;
     if (token == null) return;
 
-    final uri = Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/scenarios');
+    final uri = Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios');
     final resp = await http.get(uri, headers: {
       'Authorization': 'Bearer $token',
       'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ class _ScenarioAdminWidgetState extends State<ScenarioAdminWidget> {
     if (token == null) return;
 
     final uri = Uri.parse(
-        'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/scenarios/$id');
+        'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/$id');
     final resp = await http.delete(uri, headers: {
       'Authorization': 'Bearer $token',
     });
@@ -113,7 +113,7 @@ class _ScenarioAdminWidgetState extends State<ScenarioAdminWidget> {
               if (existing == null) {
                 resp = await http.post(
                   Uri.parse(
-                      'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/scenarios'),
+                      'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios'),
                   headers: {
                     'Authorization': 'Bearer $token',
                     'Content-Type': 'application/json',
@@ -124,7 +124,7 @@ class _ScenarioAdminWidgetState extends State<ScenarioAdminWidget> {
                 final id = existing['scenario_id'] ?? existing['id'];
                 resp = await http.put(
                   Uri.parse(
-                      'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/scenarios/$id'),
+                      'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/$id'),
                   headers: {
                     'Authorization': 'Bearer $token',
                     'Content-Type': 'application/json',

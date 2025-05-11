@@ -108,7 +108,7 @@ class _CreateScenarioPageState extends State<CreateScenarioPage> {
       'user_id': userId,
     };
 
-    final url = Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/scenarios/create');
+    final url = Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/create');
     final resp = await http.post(
       url,
       headers: {

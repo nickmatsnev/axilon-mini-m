@@ -145,7 +145,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     final userId = user['user_id'];
                     if (token == null || userId == null) return;
 
-                    final url = Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/$userId/reject-all');
+                    final url = Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/$userId/reject-all');
                     try {
                       final response = await http.put(
                         url,

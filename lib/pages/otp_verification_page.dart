@@ -58,7 +58,7 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
   Future<void> _sendOTP() async {
     try {
       final sendResponse = await http.post(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/otp'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/otp'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'phone': widget.phoneNumber}),
       );
@@ -87,7 +87,7 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
   Future<void> _deleteUserByPhone(String phone) async {
     try {
       final delResp = await http.delete(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/phone/$phone'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/phone/$phone'),
       );
       if (delResp.statusCode == 200) {
         debugPrint("User with phone $phone deleted due to failed OTP.");
@@ -110,7 +110,7 @@ class _OTPVerificationPageState extends State<OTPVerificationPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/otp/verify'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/otp/verify'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'phone': widget.phoneNumber, 'otp': otp}),
       );

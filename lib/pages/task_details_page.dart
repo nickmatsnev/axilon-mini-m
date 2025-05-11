@@ -47,7 +47,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
     setState(() => _isMarkingRead = true);
     try {
       final url = Uri.parse(
-          'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/tasks/$taskId/setRead');
+          'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/tasks/$taskId/setRead');
       await http.get(
         url,
         headers: {'Authorization': 'Bearer ${authProvider.token}'},
@@ -74,7 +74,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
 
     try {
       final response = await http.put(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/tasks/$taskId'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/tasks/$taskId'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${authProvider.token}',

@@ -84,7 +84,7 @@ class _MainPageState extends State<MainPage> {
     }
     try {
       final res = await http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/scenarios/getAll/$userId'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/getAll/$userId'),
         headers: {'Authorization': 'Bearer ${auth.token}'},
       );
       if (res.statusCode == 200) {
@@ -111,7 +111,7 @@ class _MainPageState extends State<MainPage> {
     }
     try {
       final res = await http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/$userId/calls'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/$userId/calls'),
         headers: {'Authorization': 'Bearer ${auth.token}'},
       );
       if (res.statusCode == 200) {

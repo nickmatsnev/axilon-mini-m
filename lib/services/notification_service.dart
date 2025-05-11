@@ -27,7 +27,7 @@ class NotificationService {
 
   // Sends the token to your backend API
   Future<void> sendTokenToServer(String userId, String token) async {
-    final url = Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/update-fcm-token');
+    final url = Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/update-fcm-token');
     try {
       final response = await http.post(
         url,

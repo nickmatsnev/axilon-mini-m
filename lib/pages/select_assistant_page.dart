@@ -362,7 +362,7 @@ You are Genie, a professional smartphone secretary modeled after the charismatic
 
     try {
       final response = await http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/agents/by-client/${authProvider.user?['user_id']}'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/agents/by-client/${authProvider.user?['user_id']}'),
         headers: {'Authorization': 'Bearer ${authProvider.token}'},
       );
 
@@ -386,7 +386,7 @@ You are Genie, a professional smartphone secretary modeled after the charismatic
 
     try {
       final response = await http.post(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/agents/create'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/agents/create'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${authProvider.token}',

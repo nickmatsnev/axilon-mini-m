@@ -184,7 +184,7 @@ class _SettingsPageState extends State<SettingsPage>
       }
 
       // Node server route
-      final uri = Uri.parse("https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/voice-cloning/clone-voice");
+      final uri = Uri.parse("https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/voice-cloning/clone-voice");
       final request = http.MultipartRequest('POST', uri);
 
       request.fields['userId'] = userId.toString();
@@ -488,7 +488,7 @@ class _SettingsPageState extends State<SettingsPage>
     if (userId == null) return;
 
     final url = Uri.parse(
-        'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/$userId/reject-all');
+        'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/$userId/reject-all');
     try {
       final response = await http.put(
         url,
@@ -580,7 +580,7 @@ class _SettingsPageState extends State<SettingsPage>
     try {
       final response = await http.get(
         Uri.parse(
-            'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/agents/by-client/${authProvider.user?['user_id']}'),
+            'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/agents/by-client/${authProvider.user?['user_id']}'),
         headers: {'Authorization': 'Bearer ${authProvider.token}'},
       );
 
@@ -609,7 +609,7 @@ class _SettingsPageState extends State<SettingsPage>
 
     try {
       final response = await http.post(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/agents/create'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/agents/create'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${authProvider.token}',
@@ -657,7 +657,7 @@ class _SettingsPageState extends State<SettingsPage>
 
     try {
       final response = await http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/prompts'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/prompts'),
         headers: {
           'Authorization': 'Bearer ${authProvider.token}',
         },
@@ -684,7 +684,7 @@ class _SettingsPageState extends State<SettingsPage>
     try {
       final response = await http.put(
         Uri.parse(
-            'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/prompts/$promptId'),
+            'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/prompts/$promptId'),
         headers: {
           'Authorization': 'Bearer ${authProvider.token}',
           'Content-Type': 'application/json',
@@ -767,7 +767,7 @@ class _SettingsPageState extends State<SettingsPage>
 
     try {
       final response = await http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users'),
         headers: {
           'Authorization': 'Bearer ${authProvider.token}',
         },
@@ -794,7 +794,7 @@ class _SettingsPageState extends State<SettingsPage>
     try {
       final resp = await http.delete(
         Uri.parse(
-            'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/$userId'),
+            'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/$userId'),
         headers: {
           'Authorization': 'Bearer ${authProvider.token}',
         },
@@ -815,7 +815,7 @@ class _SettingsPageState extends State<SettingsPage>
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final endpoint = isAdmin ? 'unsetAdmin' : 'setAdmin';
     final url =
-        'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/$userId/$endpoint';
+        'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/$userId/$endpoint';
 
     try {
       final response = await http.get(
@@ -945,7 +945,7 @@ class _SettingsPageState extends State<SettingsPage>
 
     try {
       final response = await http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/phone-calls'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/phone-calls'),
         headers: {
           'Authorization': 'Bearer ${authProvider.token}',
         },
@@ -972,7 +972,7 @@ class _SettingsPageState extends State<SettingsPage>
     try {
       final resp = await http.delete(
         Uri.parse(
-            'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/phone-calls/$callId'),
+            'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/phone-calls/$callId'),
         headers: {
           'Authorization': 'Bearer ${authProvider.token}',
         },
@@ -1053,7 +1053,7 @@ class _SettingsPageState extends State<SettingsPage>
 
     try {
       final response = await http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/chats'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/chats'),
         headers: {
           'Authorization': 'Bearer ${authProvider.token}',
         },
@@ -1147,7 +1147,7 @@ class _SettingsPageState extends State<SettingsPage>
 
     try {
       final response = await http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/tasks'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/tasks'),
         headers: {
           'Authorization': 'Bearer ${authProvider.token}',
         },
@@ -1243,7 +1243,7 @@ class _SettingsPageState extends State<SettingsPage>
 
     try {
       final response = await http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/agents'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/agents'),
         headers: {
           'Authorization': 'Bearer ${authProvider.token}',
         },
@@ -1280,7 +1280,7 @@ class _SettingsPageState extends State<SettingsPage>
     try {
       final response = await http.put(
         Uri.parse(
-            'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/agents/my-agent/phone-prompt'),
+            'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/agents/my-agent/phone-prompt'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
@@ -1324,7 +1324,7 @@ class _SettingsPageState extends State<SettingsPage>
     try {
       final response = await http.put(
         Uri.parse(
-            'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/agents/my-agent/prompt'),
+            'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/agents/my-agent/prompt'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'
@@ -1441,7 +1441,7 @@ class _SettingsPageState extends State<SettingsPage>
 
   Future<void> _fetchGlobalStats(String token) async {
     final url = Uri.parse(
-        'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/stats/global');
+        'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/stats/global');
     final resp = await http.get(url, headers: {'Authorization': 'Bearer $token'});
     if (resp.statusCode == 200) {
       setState(() {
@@ -1454,7 +1454,7 @@ class _SettingsPageState extends State<SettingsPage>
 
   Future<void> _fetchCallsStats(String token, String range) async {
     final url = Uri.parse(
-        'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/stats/calls?range=$range');
+        'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/stats/calls?range=$range');
     final resp = await http.get(url, headers: {'Authorization': 'Bearer $token'});
     if (resp.statusCode == 200) {
       final data = jsonDecode(resp.body) as List;
@@ -1473,7 +1473,7 @@ class _SettingsPageState extends State<SettingsPage>
 
   Future<void> _fetchMessagesStats(String token, String range) async {
     final url = Uri.parse(
-        'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/stats/messages?range=$range');
+        'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/stats/messages?range=$range');
     final resp = await http.get(url, headers: {'Authorization': 'Bearer $token'});
     if (resp.statusCode == 200) {
       final data = jsonDecode(resp.body) as List;
@@ -1492,7 +1492,7 @@ class _SettingsPageState extends State<SettingsPage>
 
   Future<void> _fetchTasksStats(String token, String range) async {
     final url = Uri.parse(
-        'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/stats/tasks?range=$range');
+        'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/stats/tasks?range=$range');
     final resp = await http.get(url, headers: {'Authorization': 'Bearer $token'});
     if (resp.statusCode == 200) {
       final data = jsonDecode(resp.body) as List;
@@ -1523,7 +1523,7 @@ class _SettingsPageState extends State<SettingsPage>
   }
   Future<void> _fetchUsersCountry(String token) async {
     final url = Uri.parse(
-        'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/stats/users-country');
+        'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/stats/users-country');
     final resp = await http.get(url, headers: {'Authorization': 'Bearer $token'});
     if (resp.statusCode == 200) {
       setState(() {
@@ -1839,7 +1839,7 @@ class _SettingsPageState extends State<SettingsPage>
     if (userId == null) return;
     final token = authProvider.token;
     final url = Uri.parse(
-        'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/voice/$userId');
+        'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/voice/$userId');
     try {
       final response = await http.put(
         url,
@@ -2817,23 +2817,23 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
 
     // 1) Fetch calls, tasks, chats, scenarios, agents
     final callsFut = http.get(
-      Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/$userId/calls'),
+      Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/$userId/calls'),
       headers: headers,
     );
     final tasksFut = http.get(
-      Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/$userId/tasks'),
+      Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/$userId/tasks'),
       headers: headers,
     );
     final chatsFut = http.get(
-      Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/$userId/chats'),
+      Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/$userId/chats'),
       headers: headers,
     );
     final scenFut = http.get(
-      Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/$userId/scenarios'),
+      Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/$userId/scenarios'),
       headers: headers,
     );
     final agentsFut = http.get(
-      Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/agents'),
+      Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/agents'),
       headers: headers,
     );
 
@@ -2857,7 +2857,7 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
     final messageFutures = _userChats.map((chat) {
       final chatId = chat['chat_id'].toString();
       return http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/chat-messages/chat/$chatId'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/chat-messages/chat/$chatId'),
         headers: headers,
       );
     }).toList();
@@ -3038,7 +3038,7 @@ class _ScenarioChatDetailsPageState extends State<ScenarioChatDetailsPage> {
     final token = Provider.of<AuthProvider>(context, listen: false).token;
     final resp = await http.get(
       Uri.parse(
-          'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/scenarios/$sid/chats'),
+          'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/$sid/chats'),
       headers: {'Authorization': 'Bearer $token'},
     );
     if (resp.statusCode == 200) {
@@ -3092,7 +3092,7 @@ class _PhoneCallDetailsPageState extends State<PhoneCallDetailsPage> {
     try {
       final resp = await http.get(
         Uri.parse(
-            'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/by-phone/$phone'),
+            'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/by-phone/$phone'),
       );
       if (resp.statusCode == 200) {
         return jsonDecode(resp.body);
@@ -3182,7 +3182,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     try {
       final resp = await http.get(
         Uri.parse(
-            'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/chat-messages/chat/$cId'),
+            'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/chat-messages/chat/$cId'),
       );
       if (resp.statusCode == 200) {
         final data = jsonDecode(resp.body);

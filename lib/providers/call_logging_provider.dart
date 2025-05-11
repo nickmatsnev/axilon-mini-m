@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class CallLoggingProvider with ChangeNotifier {
-  final String apiBaseUrl = 'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/phone-calls';
+  final String apiBaseUrl = 'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/phone-calls';
   final String token; // Pass token during provider initialization
 
   CallLoggingProvider(this.token);

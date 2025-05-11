@@ -151,7 +151,7 @@ class _CallLogsPageState extends State<CallLogsPage> {
       return;
     }
     try {
-      final url = Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/$userId/calls');
+      final url = Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/$userId/calls');
       final resp = await http.get(url, headers: {'Authorization':'Bearer ${auth.token}'});
       if (resp.statusCode == 200) {
         final data = jsonDecode(resp.body);

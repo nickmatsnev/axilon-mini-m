@@ -121,7 +121,7 @@ class _ScenarioChatPageState extends State<ScenarioChatPage> with TickerProvider
     final auth = Provider.of<AuthProvider>(context, listen: false);
     try {
       final resp = await http.post(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/agents/my-agent'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/agents/my-agent'),
         headers: {
           'Authorization': 'Bearer ${auth.token}',
           'Content-Type': 'application/json',
@@ -145,7 +145,7 @@ class _ScenarioChatPageState extends State<ScenarioChatPage> with TickerProvider
     final auth = Provider.of<AuthProvider>(context, listen: false);
     try {
       final resp = await http.post(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/scenarios/scenario-chat/create'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/scenario-chat/create'),
         headers: {
           'Authorization': 'Bearer ${auth.token}',
           'Content-Type': 'application/json',
@@ -210,7 +210,7 @@ class _ScenarioChatPageState extends State<ScenarioChatPage> with TickerProvider
     // 2) call your BE
     final auth = Provider.of<AuthProvider>(context, listen: false);
     final resp = await http.post(
-      Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/scenarios/scenario-chat/message'),
+      Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/scenario-chat/message'),
       headers: {
         'Authorization': 'Bearer ${auth.token}',
         'Content-Type': 'application/json',
@@ -242,7 +242,7 @@ class _ScenarioChatPageState extends State<ScenarioChatPage> with TickerProvider
         // 4) final step: POST to create scenario
         insertBody['user_id'] = auth.user!['user_id'];
         final createResp = await http.post(
-          Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/scenarios/create'),
+          Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/create'),
           headers: {
             'Authorization': 'Bearer ${auth.token}',
             'Content-Type': 'application/json',

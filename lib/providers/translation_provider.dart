@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 
 class TranslationProvider extends ChangeNotifier {
-  final String baseUrl = 'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api';
+  final String baseUrl = 'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api';
   Map<String, String>? _localizedStrings;
   String _currentLang = 'en'; // default to English
 
@@ -59,7 +59,7 @@ class TranslationProvider extends ChangeNotifier {
   Future<void> fetchUserLanguage(String token, String userId) async {
     try {
       final response = await http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/$userId'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/$userId'),
         headers: {
           'Authorization': 'Bearer ${token}',
         },

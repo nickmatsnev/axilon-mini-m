@@ -91,7 +91,7 @@ class _AdminPanelPageState extends State<AdminPanelPage>
 
     try {
       final response = await http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/prompts'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/prompts'),
         headers: {
           'Authorization': 'Bearer ${authProvider.token}',
         },
@@ -117,7 +117,7 @@ class _AdminPanelPageState extends State<AdminPanelPage>
 
     try {
       final response = await http.put(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/prompts/$promptId'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/prompts/$promptId'),
         headers: {
           'Authorization': 'Bearer ${authProvider.token}',
           'Content-Type': 'application/json',
@@ -206,7 +206,7 @@ class _AdminPanelPageState extends State<AdminPanelPage>
 
     try {
       final response = await http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users'),
         headers: {
           'Authorization': 'Bearer ${authProvider.token}',
         },
@@ -233,7 +233,7 @@ class _AdminPanelPageState extends State<AdminPanelPage>
 
     try {
       final resp = await http.delete(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/$userId'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/$userId'),
         headers: {
           'Authorization': 'Bearer ${authProvider.token}',
         },
@@ -252,7 +252,7 @@ class _AdminPanelPageState extends State<AdminPanelPage>
   Future<void> _toggleAdmin(String userId, bool isAdmin) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final endpoint = isAdmin ? 'unsetAdmin' : 'setAdmin';
-    final url = 'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/$userId/$endpoint';
+    final url = 'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/$userId/$endpoint';
 
     try {
       final response = await http.get(
@@ -387,7 +387,7 @@ class _AdminPanelPageState extends State<AdminPanelPage>
 
     try {
       final response = await http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/phone-calls'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/phone-calls'),
         headers: {
           'Authorization': 'Bearer ${authProvider.token}',
         },
@@ -414,7 +414,7 @@ class _AdminPanelPageState extends State<AdminPanelPage>
 
     try {
       final resp = await http.delete(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/phone-calls/$callId'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/phone-calls/$callId'),
         headers: {
           'Authorization': 'Bearer ${authProvider.token}',
         },
@@ -498,7 +498,7 @@ class _AdminPanelPageState extends State<AdminPanelPage>
 
     try {
       final response = await http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/chats'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/chats'),
         headers: {
           'Authorization': 'Bearer ${authProvider.token}',
         },
@@ -596,7 +596,7 @@ class _AdminPanelPageState extends State<AdminPanelPage>
 
     try {
       final response = await http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/tasks'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/tasks'),
         headers: {
           'Authorization': 'Bearer ${authProvider.token}',
         },
@@ -696,7 +696,7 @@ class _AdminPanelPageState extends State<AdminPanelPage>
 
     try {
       final response = await http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/agents'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/agents'),
         headers: {
           'Authorization': 'Bearer ${authProvider.token}',
         },
@@ -874,7 +874,7 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
     setState(() => _isLoadingExtras = true);
 
     final userId = widget.userData['user_id'];
-    final baseUrl = 'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/';
+    final baseUrl = 'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/';
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     try {
@@ -1066,7 +1066,7 @@ class _PhoneCallDetailsPageState extends State<PhoneCallDetailsPage> {
     if (phone.isEmpty) return null;
     try {
       final resp = await http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/by-phone/$phone'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/by-phone/$phone'),
       );
       if (resp.statusCode == 200) {
         final data = jsonDecode(resp.body);
@@ -1159,7 +1159,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     final cId = widget.chatData['chat_id'];
     try {
       final resp = await http.get(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/chat-messages/chat/$cId'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/chat-messages/chat/$cId'),
       );
       if (resp.statusCode == 200) {
         final data = jsonDecode(resp.body);

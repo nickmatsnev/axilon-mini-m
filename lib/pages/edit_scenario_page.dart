@@ -44,7 +44,7 @@ class _EditScenarioPageState extends State<EditScenarioPage> {
   Future<void> _loadScenario() async {
     final auth = Provider.of<AuthProvider>(context, listen: false);
     final resp = await http.get(
-      Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/scenarios/get/${widget.scenarioId}'),
+      Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/get/${widget.scenarioId}'),
       headers: {'Authorization':'Bearer ${auth.token}'},
     );
     if (resp.statusCode == 200) {
@@ -99,7 +99,7 @@ class _EditScenarioPageState extends State<EditScenarioPage> {
       'prompt_value':_promptCtrl.text.trim(),
     };
     final resp = await http.put(
-      Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/scenarios/update/${widget.scenarioId}'),
+      Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/update/${widget.scenarioId}'),
       headers:{'Content-Type':'application/json','Authorization':'Bearer ${auth.token}'},
       body: jsonEncode(body),
     );

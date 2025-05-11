@@ -29,7 +29,7 @@ class _ScenarioStatsWidgetState extends State<ScenarioStatsWidget> {
     final token = Provider.of<AuthProvider>(context, listen: false).token;
     if (token == null) return;
     final uri = Uri.parse(
-        'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/stats/scenarios?range=$_range'
+        'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/stats/scenarios?range=$_range'
     );
     final resp = await http.get(uri, headers: { 'Authorization': 'Bearer $token' });
     if (resp.statusCode == 200) {

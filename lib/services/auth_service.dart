@@ -2,11 +2,11 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AuthService {
-  final String baseUrl = 'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api';
+  final String baseUrl = 'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api';
 
 Future<Map<String, dynamic>> fetchChat(String token) async {
   final response = await http.get(
-    Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/chats'),
+    Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/chats'),
     headers: {'Authorization': 'Bearer $token'},
   );
 
@@ -19,7 +19,7 @@ Future<Map<String, dynamic>> fetchChat(String token) async {
   Future<bool> validateToken(String token) async {
     try {
       final response = await http.post(
-        Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/auth/validate-token'),
+        Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/auth/validate-token'),
         headers: {'Authorization': 'Bearer $token'},
       );
       return response.statusCode == 200; // Token is valid if status is 200

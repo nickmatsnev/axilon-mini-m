@@ -8,7 +8,7 @@ import '../services/auth_service.dart';
 import 'package:http/http.dart' as http;
 
 class AuthProvider with ChangeNotifier {
-  final String baseUrl = 'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api'; // Replace with your server URL
+  final String baseUrl = 'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api'; // Replace with your server URL
   final _storage = const FlutterSecureStorage();
   final AuthService _authService = AuthService();
 
@@ -31,7 +31,7 @@ class AuthProvider with ChangeNotifier {
 
     try {
       final response = await http.get(
-        Uri.parse('https://https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/me'),
+        Uri.parse('https://https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/me'),
         headers: {
           'Authorization': 'Bearer $_token',
         },
@@ -132,8 +132,8 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> deleteUser(String userId, String token) async {
-    // e.g. final url = 'https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/$userId';
-    final url = Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/users/$userId');
+    // e.g. final url = 'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/$userId';
+    final url = Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/$userId');
 
     try {
       final response = await http.delete(

@@ -76,7 +76,7 @@ class _StatsPageState extends State<StatsPage> {
 
   // 1) Global stats
   Future<void> _fetchGlobalStats(String token) async {
-    final url = Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/stats/global');
+    final url = Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/stats/global');
     final resp = await http.get(url, headers: {'Authorization': 'Bearer $token'});
     if (resp.statusCode == 200) {
       setState(() {
@@ -89,7 +89,7 @@ class _StatsPageState extends State<StatsPage> {
 
   // 2) Calls
   Future<void> _fetchCallsData(String token, String range) async {
-    final url = Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/stats/calls?range=$range');
+    final url = Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/stats/calls?range=$range');
     final resp = await http.get(url, headers: {'Authorization': 'Bearer $token'});
     if (resp.statusCode == 200) {
       final data = jsonDecode(resp.body) as List;
@@ -106,7 +106,7 @@ class _StatsPageState extends State<StatsPage> {
 
   // 3) Messages
   Future<void> _fetchMessagesData(String token, String range) async {
-    final url = Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/stats/messages?range=$range');
+    final url = Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/stats/messages?range=$range');
     final resp = await http.get(url, headers: {'Authorization': 'Bearer $token'});
     if (resp.statusCode == 200) {
       final data = jsonDecode(resp.body) as List;
@@ -123,7 +123,7 @@ class _StatsPageState extends State<StatsPage> {
 
   // 4) Tasks
   Future<void> _fetchTasksData(String token, String range) async {
-    final url = Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/stats/tasks?range=$range');
+    final url = Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/stats/tasks?range=$range');
     final resp = await http.get(url, headers: {'Authorization': 'Bearer $token'});
     if (resp.statusCode == 200) {
       final data = jsonDecode(resp.body) as List;
@@ -140,7 +140,7 @@ class _StatsPageState extends State<StatsPage> {
 
   // 5) Users Country Distribution
   Future<void> _fetchUsersCountry(String token) async {
-    final url = Uri.parse('https://axilon-be-dd0f4db1f2c9.herokuapp.com/api/stats/users-country');
+    final url = Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/stats/users-country');
     final resp = await http.get(url, headers: {'Authorization': 'Bearer $token'});
     if (resp.statusCode == 200) {
       setState(() {
