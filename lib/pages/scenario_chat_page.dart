@@ -1,3 +1,4 @@
+import 'package:axilon_mini_m/pages/resume_scenario_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:intl/intl.dart';
@@ -239,7 +240,6 @@ class _ScenarioChatPageState extends State<ScenarioChatPage> with TickerProvider
       ));
 
       if (insertBody != null) {
-        // 4) final step: POST to create scenario
         insertBody['user_id'] = auth.user!['user_id'];
         final createResp = await http.post(
           Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/create'),
@@ -250,19 +250,28 @@ class _ScenarioChatPageState extends State<ScenarioChatPage> with TickerProvider
           body: jsonEncode(insertBody),
         );
         if (createResp.statusCode == 200) {
+          final data = jsonDecode(createResp.body);
+          final newScenarioId = data['scenario']?['id'] ?? data['id'];
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Scenario created successfully!')),
+            SnackBar(content: Text('Scenario created successfully!')),
           );
-          Navigator.pushReplacementNamed(context, '/main');
+          // ▶ Navigate to the resume/edit page instead of popping home
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ResumeScenarioPage(
+                scenarioId: newScenarioId,
+                chatId: _chatId,
+              ),
+            ),
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Failed to save scenario.')),
+            SnackBar(content: Text('Failed to save scenario.')),
           );
         }
-      } else {
-        // 5) still gathering info → show next quick-replies
-        setState(() => _initialSuggestions = suggestions);
       }
+
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error ${resp.statusCode} sending message')),

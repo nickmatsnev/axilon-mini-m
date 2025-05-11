@@ -1,3 +1,4 @@
+import 'package:axilon_mini_m/pages/resume_scenario_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -90,7 +91,7 @@ class ScenariosPage extends StatefulWidget {
 class _ScenariosPageState extends State<ScenariosPage> {
   bool _isLoading = true;
   List<dynamic> _scenarios = [];
-  int _selectedIndex = 3; // for bottom nav
+  int _selectedIndex = 2; // for bottom nav
 
   @override
   void initState() {
@@ -107,11 +108,8 @@ class _ScenariosPageState extends State<ScenariosPage> {
         Navigator.pushReplacementNamed(context, '/logs');
         break;
       case 2:
-        Navigator.pushReplacementNamed(context, '/chat');
-        break;
-      case 3:
         break; // already here
-      case 4:
+      case 3:
         Navigator.pushReplacementNamed(context, '/settings');
         break;
     }
@@ -137,7 +135,20 @@ class _ScenariosPageState extends State<ScenariosPage> {
     }
     setState(() => _isLoading = false);
   }
-
+  String _cleanAndTitle(String raw) {
+    String extracted;
+    try {
+      final obj = jsonDecode(raw);
+      extracted = obj['message'] ?? raw;
+    } catch (_) {
+      extracted = raw;
+    }
+    // Title-case:
+    return extracted
+        .split(' ')
+        .map((w) => w.isEmpty ? w : '${w[0].toUpperCase()}${w.substring(1)}')
+        .join(' ');
+  }
   @override
   Widget build(BuildContext context) {
     final t = Provider.of<TranslationProvider>(context);
@@ -151,470 +162,59 @@ class _ScenariosPageState extends State<ScenariosPage> {
       ),
       body: SafeArea(
         child: _isLoading
-            ? Stack(children: [const Center(child: CircularProgressIndicator()), Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    top: BorderSide(color: Colors.indigo.shade300, width: 1),
-                  ),
-                ),
-                child: BottomAppBar(
-                  shape: const CircularNotchedRectangle(),
-                  notchMargin: 8.0,
-                  color: Colors.white,
-                  elevation: 8.0,
-                  child: SizedBox(
-                    height: 60,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        IconButton(
-                          iconSize: 30.0,
-                          icon: const Icon(Icons.home_outlined),
-                          color: _selectedIndex == 0 ? Colors.indigo : Colors.grey,
-                          onPressed: () => _onItemTapped(0),
-                        ),
-                        IconButton(
-                          iconSize: 30.0,
-                          icon: const Icon(Icons.call_outlined),
-                          color: _selectedIndex == 1 ? Colors.indigo : Colors.grey,
-                          onPressed: () => _onItemTapped(1),
-                        ),
-                        const SizedBox(width: 48),
-                        IconButton(
-                          iconSize: 30.0,
-                          icon: const Icon(Icons.fact_check_outlined),
-                          color: _selectedIndex == 3 ? Colors.indigo : Colors.grey,
-                          onPressed: () => _onItemTapped(3),
-                        ),
-                        IconButton(
-                          iconSize: 30.0,
-                          icon: const Icon(Icons.settings_outlined),
-                          color: _selectedIndex == 4 ? Colors.indigo : Colors.grey,
-                          onPressed: () => _onItemTapped(4),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              // White bridging shape
-              Positioned(
-                bottom: 48,
-                left: 0,
-                right: 0,
-                child: InkWell(
-                  // onTap: () => _onItemTapped(2),
-                  child: Center(
-                    child: CustomPaint(
-                      painter: _TrianglePainter(),
-                      child: const SizedBox(width: 90, height: 70),
-                    ),
-                  ),
-                ),
-              ),
-
-              // Big extra triangle
-              Positioned(
-                bottom: 60,
-                left: 0,
-                right: 0,
-                child: InkWell(
-                  // onTap: () => _onItemTapped(2),
-                  child: Center(
-                    child: CustomPaint(
-                      painter: _BigTrianglePainter(),
-                      child: const SizedBox(width: 110, height: 80),
-                    ),
-                  ),
-                ),
-              ),
-
-              // Diamond button w/ Chat Icon
-              Positioned(
-                bottom: 56,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: Transform.rotate(
-                    angle: math.pi / 4, // diamond shape
-                    child: InkWell(
-                      onTap: () => _onItemTapped(2),
-                      child: Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: Colors.indigo.shade300,
-                            width: 1.0,
-                          ),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.transparent,
-                              blurRadius: 6,
-                            ),
-                          ],
-                        ),
-                        child: Transform.rotate(
-                          angle: -math.pi / 4,
-                          child: SvgPicture.asset(
-                            'assets/ChatIcon.svg',
-                            semanticsLabel: 'Chat Icon',
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              // AI-Chat label
-              Positioned(
-                bottom: 4,
-                left: 0,
-                right: 0,
-                child: InkWell(
-                  // onTap: () => _onItemTapped(2),
-                  child: Center(
-                    child: Text(
-                      t.t("AI-Chat"),
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.indigo.shade700,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),])
+            ? Stack(children: [const Center(child: CircularProgressIndicator())])
             : _scenarios.isEmpty
-            ? Stack(children: [Center(child: Text(t.t('No scenarios found.'))), Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    top: BorderSide(color: Colors.indigo.shade300, width: 1),
-                  ),
-                ),
-                child: BottomAppBar(
-                  shape: const CircularNotchedRectangle(),
-                  notchMargin: 8.0,
-                  color: Colors.white,
-                  elevation: 8.0,
-                  child: SizedBox(
-                    height: 60,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        IconButton(
-                          iconSize: 30.0,
-                          icon: const Icon(Icons.home_outlined),
-                          color: _selectedIndex == 0 ? Colors.indigo : Colors.grey,
-                          onPressed: () => _onItemTapped(0),
-                        ),
-                        IconButton(
-                          iconSize: 30.0,
-                          icon: const Icon(Icons.call_outlined),
-                          color: _selectedIndex == 1 ? Colors.indigo : Colors.grey,
-                          onPressed: () => _onItemTapped(1),
-                        ),
-                        const SizedBox(width: 48),
-                        IconButton(
-                          iconSize: 30.0,
-                          icon: const Icon(Icons.fact_check_outlined),
-                          color: _selectedIndex == 3 ? Colors.indigo : Colors.grey,
-                          onPressed: () => _onItemTapped(3),
-                        ),
-                        IconButton(
-                          iconSize: 30.0,
-                          icon: const Icon(Icons.settings_outlined),
-                          color: _selectedIndex == 4 ? Colors.indigo : Colors.grey,
-                          onPressed: () => _onItemTapped(4),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              // White bridging shape
-              Positioned(
-                bottom: 48,
-                left: 0,
-                right: 0,
-                child: InkWell(
-                  // onTap: () => _onItemTapped(2),
-                  child: Center(
-                    child: CustomPaint(
-                      painter: _TrianglePainter(),
-                      child: const SizedBox(width: 90, height: 70),
-                    ),
-                  ),
-                ),
-              ),
-
-              // Big extra triangle
-              Positioned(
-                bottom: 60,
-                left: 0,
-                right: 0,
-                child: InkWell(
-                  // onTap: () => _onItemTapped(2),
-                  child: Center(
-                    child: CustomPaint(
-                      painter: _BigTrianglePainter(),
-                      child: const SizedBox(width: 110, height: 80),
-                    ),
-                  ),
-                ),
-              ),
-
-              // Diamond button w/ Chat Icon
-              Positioned(
-                bottom: 56,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: Transform.rotate(
-                    angle: math.pi / 4, // diamond shape
-                    child: InkWell(
-                      onTap: () => _onItemTapped(2),
-                      child: Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: Colors.indigo.shade300,
-                            width: 1.0,
-                          ),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.transparent,
-                              blurRadius: 6,
-                            ),
-                          ],
-                        ),
-                        child: Transform.rotate(
-                          angle: -math.pi / 4,
-                          child: SvgPicture.asset(
-                            'assets/ChatIcon.svg',
-                            semanticsLabel: 'Chat Icon',
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              // AI-Chat label
-              Positioned(
-                bottom: 4,
-                left: 0,
-                right: 0,
-                child: InkWell(
-                  // onTap: () => _onItemTapped(2),
-                  child: Center(
-                    child: Text(
-                      t.t("AI-Chat"),
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.indigo.shade700,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),])
-            : Stack(children:[ListView.builder(
+            ? Stack(children: [Center(child: Text(t.t('No scenarios found.'))),])
+            : Stack(children:[
+              ListView.builder(
           itemCount: _scenarios.length,
           itemBuilder: (_, i) {
             final scn = _scenarios[i];
             return Card(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: ListTile(
-                title: Text(scn['scenario_name'] ?? '—'),
+                title: Text(_cleanAndTitle(scn['scenario_name']) ?? '—'),
                 subtitle: Text(scn['summary'] ?? '—'),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => EditScenarioPage(scenarioId: scn['id']),
-                    ),
+                  final auth     = Provider.of<AuthProvider>(context, listen: false);
+                  final token    = auth.token!;
+                  final userId   = auth.user!['user_id'];
+                  // Always ask BE to create (or fetch) a scenario‐chat for this scenario:
+                  final resp = await http.post(
+                    Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/scenario-chat/create'),
+                    headers: {
+                      'Authorization': 'Bearer $token',
+                      'Content-Type':  'application/json',
+                    },
+                    body: jsonEncode({
+                      'user_id':    userId,
+                      'scenario_id': scn['id'],      // ← pass scenarioId so BE can reuse/create
+                    }),
                   );
-                  _fetchScenarios();
+                  if (resp.statusCode == 200) {
+                    final data   = jsonDecode(resp.body);
+                    final chatId = data['chat']['chat_id'].toString();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ResumeScenarioPage(
+                          scenarioId: scn['id'],
+                          chatId:      chatId,
+                        ),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to load scenario chat.')),
+                    );
+                  }
                 },
               ),
             );
           },
-        ),Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    top: BorderSide(color: Colors.indigo.shade300, width: 1),
-                  ),
-                ),
-                child: BottomAppBar(
-                  shape: const CircularNotchedRectangle(),
-                  notchMargin: 8.0,
-                  color: Colors.white,
-                  elevation: 8.0,
-                  child: SizedBox(
-                    height: 60,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        IconButton(
-                          iconSize: 30.0,
-                          icon: const Icon(Icons.home_outlined),
-                          color: _selectedIndex == 0 ? Colors.indigo : Colors.grey,
-                          onPressed: () => _onItemTapped(0),
-                        ),
-                        IconButton(
-                          iconSize: 30.0,
-                          icon: const Icon(Icons.call_outlined),
-                          color: _selectedIndex == 1 ? Colors.indigo : Colors.grey,
-                          onPressed: () => _onItemTapped(1),
-                        ),
-                        const SizedBox(width: 48),
-                        IconButton(
-                          iconSize: 30.0,
-                          icon: const Icon(Icons.fact_check_outlined),
-                          color: _selectedIndex == 3 ? Colors.indigo : Colors.grey,
-                          onPressed: () => _onItemTapped(3),
-                        ),
-                        IconButton(
-                          iconSize: 30.0,
-                          icon: const Icon(Icons.settings_outlined),
-                          color: _selectedIndex == 4 ? Colors.indigo : Colors.grey,
-                          onPressed: () => _onItemTapped(4),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              // White bridging shape
-              Positioned(
-                bottom: 48,
-                left: 0,
-                right: 0,
-                child: InkWell(
-                  // onTap: () => _onItemTapped(2),
-                  child: Center(
-                    child: CustomPaint(
-                      painter: _TrianglePainter(),
-                      child: const SizedBox(width: 90, height: 70),
-                    ),
-                  ),
-                ),
-              ),
-
-              // Big extra triangle
-              Positioned(
-                bottom: 60,
-                left: 0,
-                right: 0,
-                child: InkWell(
-                  // onTap: () => _onItemTapped(2),
-                  child: Center(
-                    child: CustomPaint(
-                      painter: _BigTrianglePainter(),
-                      child: const SizedBox(width: 110, height: 80),
-                    ),
-                  ),
-                ),
-              ),
-
-              // Diamond button w/ Chat Icon
-              Positioned(
-                bottom: 56,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: Transform.rotate(
-                    angle: math.pi / 4, // diamond shape
-                    child: InkWell(
-                      onTap: () => _onItemTapped(2),
-                      child: Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: Colors.indigo.shade300,
-                            width: 1.0,
-                          ),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.transparent,
-                              blurRadius: 6,
-                            ),
-                          ],
-                        ),
-                        child: Transform.rotate(
-                          angle: -math.pi / 4,
-                          child: SvgPicture.asset(
-                            'assets/ChatIcon.svg',
-                            semanticsLabel: 'Chat Icon',
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              // AI-Chat label
-              Positioned(
-                bottom: 4,
-                left: 0,
-                right: 0,
-                child: InkWell(
-                  // onTap: () => _onItemTapped(2),
-                  child: Center(
-                    child: Text(
-                      t.t("AI-Chat"),
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.indigo.shade700,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),])
+        ),
+          ])
       ),
       // 1) Tell Scaffold to float at its end.
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -636,7 +236,39 @@ class _ScenariosPageState extends State<ScenariosPage> {
             _fetchScenarios();
           },
         ),
-      ),
+      ),bottomNavigationBar: BottomNavigationBar(
+      backgroundColor: Colors.white,
+      selectedItemColor: Colors.indigo,
+      unselectedItemColor: Colors.grey,
+      currentIndex: _selectedIndex,
+      onTap: (idx) {
+        setState(() => _selectedIndex = idx);
+        switch (idx) {
+          case 0: Navigator.pushReplacementNamed(context, '/main');  break;
+          case 1: Navigator.pushReplacementNamed(context, '/logs'); break;
+          case 2: break;
+          case 3: Navigator.pushReplacementNamed(context, '/settings'); break;
+        }
+      },
+      items: [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home_outlined),
+          label: t.t("Home"),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.call_outlined),
+          label: t.t("Calls"),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.fact_check_outlined),
+          label: t.t("Scenarios"),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.settings_outlined),
+          label: t.t("Settings"),
+        ),
+      ],
+    ),
     );
   }
 }

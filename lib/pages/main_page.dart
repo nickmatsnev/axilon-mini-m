@@ -100,6 +100,20 @@ class _MainPageState extends State<MainPage> {
       setState(() => _isLoadingScenarios = false);
     }
   }
+  String _cleanAndTitle(String raw) {
+    String extracted;
+    try {
+      final obj = jsonDecode(raw);
+      extracted = obj['message'] ?? raw;
+    } catch (_) {
+      extracted = raw;
+    }
+    // Title-case:
+    return extracted
+        .split(' ')
+        .map((w) => w.isEmpty ? w : '${w[0].toUpperCase()}${w.substring(1)}')
+        .join(' ');
+  }
 
   Future<void> _fetchUnreadCalls() async {
     setState(() => _isLoadingCalls = true);
@@ -160,9 +174,8 @@ class _MainPageState extends State<MainPage> {
     switch (idx) {
       case 0: break;
       case 1: Navigator.pushReplacementNamed(context, '/logs'); break;
-      case 2: Navigator.pushReplacementNamed(context, '/chat'); break;
-      case 3: Navigator.pushReplacementNamed(context, '/scenarios'); break;
-      case 4: Navigator.pushReplacementNamed(context, '/settings'); break;
+      case 2: Navigator.pushReplacementNamed(context, '/scenarios'); break;
+      case 3: Navigator.pushReplacementNamed(context, '/settings'); break;
     }
   }
 
@@ -350,7 +363,7 @@ class _MainPageState extends State<MainPage> {
                                                 borderRadius: BorderRadius.circular(8)
                                             ),
                                             child: ListTile(
-                                              title: Text(scn['scenario_name'] ?? '---'),
+                                              title: Text(_cleanAndTitle(scn['scenario_name']) ?? '---'),
                                               subtitle: Text(scn['summary'] ?? '---'),
                                             ),
                                           ),
@@ -364,7 +377,7 @@ class _MainPageState extends State<MainPage> {
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         ElevatedButton.icon(
-                                          onPressed: () => Navigator.pushNamed(context, '/chat'),
+                                          onPressed: () => Navigator.pushNamed(context, '/create-scenario-chat'),
                                           icon: const Icon(Icons.add, size: 18),
                                           label: Text(t.t("New Scenario")),
                                           style: ElevatedButton.styleFrom(
@@ -396,113 +409,42 @@ class _MainPageState extends State<MainPage> {
               ),
 
               // Bottom navigation + diamond
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.indigo.shade300, width:1))),
-                      child: BottomAppBar(
-                        shape: const CircularNotchedRectangle(),
-                        notchMargin: 8,
-                        color: Colors.white,
-                        elevation: 8,
-                        child: SizedBox(
-                          height: 60,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.home_outlined), iconSize:30,
-                                color: _selectedIndex==0?Colors.indigo:Colors.grey,
-                                onPressed: ()=>_onItemTapped(0),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.call_outlined), iconSize:30,
-                                color: _selectedIndex==1?Colors.indigo:Colors.grey,
-                                onPressed: ()=>_onItemTapped(1),
-                              ),
-                              const SizedBox(width:48),
-                              IconButton(
-                                icon: const Icon(Icons.fact_check_outlined), iconSize:30,
-                                color: _selectedIndex==3?Colors.indigo:Colors.grey,
-                                onPressed: ()=>_onItemTapped(3),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.settings_outlined), iconSize:30,
-                                color: _selectedIndex==4?Colors.indigo:Colors.grey,
-                                onPressed: ()=>_onItemTapped(4),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
 
-                    // bridging triangle
-                    Positioned(
-                      bottom: 48, left:0, right:0,
-                      child: Center(
-                        child: CustomPaint(
-                          painter: _TrianglePainter(),
-                          child: const SizedBox(width:90, height:70),
-                        ),
-                      ),
-                    ),
-
-                    // big triangle
-                    Positioned(
-                      bottom:60, left:0, right:0,
-                      child: Center(
-                        child: CustomPaint(
-                          painter: _BigTrianglePainter(),
-                          child: const SizedBox(width:110, height:80),
-                        ),
-                      ),
-                    ),
-
-                    // diamond button
-                    Positioned(
-                      bottom:56, left:0, right:0,
-                      child: Center(
-                        child: Transform.rotate(
-                          angle: math.pi/4,
-                          child: InkWell(
-                            onTap: ()=>_onItemTapped(2),
-                            child: Container(
-                              width:56, height:56,
-                              decoration: BoxDecoration(
-                                color:Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color:Colors.indigo.shade300, width:1),
-                              ),
-                              child: Transform.rotate(
-                                angle: -math.pi/4,
-                                child: SvgPicture.asset('assets/ChatIcon.svg'),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // label
-                    Positioned(
-                      bottom:4, left:0, right:0,
-                      child: Center(
-                        child: Text(
-                          t.t("AI-Chat"),
-                          style: TextStyle(fontSize:12, fontWeight:FontWeight.bold, color:Colors.indigo.shade700),
-                        ),
-                      ),
-                    ),
-
-                  ],
-                ),
-              ),
             ],
           ),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.white,
+          selectedItemColor: Colors.indigo,
+          unselectedItemColor: Colors.grey,
+          currentIndex: _selectedIndex,
+          onTap: (idx) {
+            setState(() => _selectedIndex = idx);
+            switch (idx) {
+              case 0: /* Home stays */ break;
+              case 1: Navigator.pushReplacementNamed(context, '/logs'); break;
+              case 2: Navigator.pushReplacementNamed(context, '/scenarios'); break;
+              case 3: Navigator.pushReplacementNamed(context, '/settings'); break;
+            }
+          },
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_outlined),
+              label: t.t("Home"),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.call_outlined),
+              label: t.t("Calls"),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.fact_check_outlined),
+              label: t.t("Scenarios"),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings_outlined),
+              label: t.t("Settings"),
+            ),
+          ],
         ),
       ),
     );

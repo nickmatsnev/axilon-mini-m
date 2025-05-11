@@ -308,9 +308,8 @@ class _CallLogsPageState extends State<CallLogsPage> {
     switch(index) {
       case 0: Navigator.pushReplacementNamed(context,'/main'); break;
       case 1: break;
-      case 2: Navigator.pushReplacementNamed(context,'/chat'); break;
-      case 3: Navigator.pushReplacementNamed(context,'/scenarios'); break;
-      case 4: Navigator.pushReplacementNamed(context,'/settings'); break;
+      case 2: Navigator.pushReplacementNamed(context,'/scenarios'); break;
+      case 3: Navigator.pushReplacementNamed(context,'/settings'); break;
     }
   }
 
@@ -395,73 +394,41 @@ class _CallLogsPageState extends State<CallLogsPage> {
                 ),
               ),
               // bottom nav
-              Positioned(
-                left: 0, right: 0, bottom: 0,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.indigo.shade300, width: 1))),
-                      child: BottomAppBar(
-                        shape: const CircularNotchedRectangle(),
-                        notchMargin: 8,
-                        color: Colors.white,
-                        elevation: 8,
-                        child: SizedBox(
-                          height: 60,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              IconButton(iconSize: 30, icon: const Icon(Icons.home_outlined), color: _selectedIndex==0?Colors.indigo:Colors.grey, onPressed: ()=>_onItemTapped(0)),
-                              IconButton(iconSize: 30, icon: const Icon(Icons.call_outlined), color: _selectedIndex==1?Colors.indigo:Colors.grey, onPressed: ()=>_onItemTapped(1)),
-                              const SizedBox(width: 48),
-                              IconButton(iconSize: 30, icon: const Icon(Icons.fact_check_outlined), color: _selectedIndex==3?Colors.indigo:Colors.grey, onPressed: ()=>_onItemTapped(3)),
-                              IconButton(iconSize: 30, icon: const Icon(Icons.settings_outlined), color: _selectedIndex==4?Colors.indigo:Colors.grey, onPressed: ()=>_onItemTapped(4)),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 48, left: 0, right: 0,
-                      child: Center(child: CustomPaint(painter: _TrianglePainter(), child: const SizedBox(width: 90, height: 70))),
-                    ),
-                    Positioned(
-                      bottom: 60, left: 0, right: 0,
-                      child: Center(child: CustomPaint(painter: _BigTrianglePainter(), child: const SizedBox(width: 110, height: 80))),
-                    ),
-                    Positioned(
-                      bottom: 56, left: 0, right: 0,
-                      child: Center(
-                        child: Transform.rotate(
-                          angle: math.pi/4,
-                          child: InkWell(
-                            onTap: ()=>_onItemTapped(2),
-                            child: Container(
-                              width: 56, height: 56,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Colors.indigo.shade300, width: 1),
-                              ),
-                              child: Transform.rotate(
-                                angle: -math.pi/4,
-                                child: SvgPicture.asset('assets/ChatIcon.svg'),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 4, left: 0, right: 0,
-                      child: Center(child: Text(t.t("AI-Chat"), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.indigo.shade700))),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.white,
+          selectedItemColor: Colors.indigo,
+          unselectedItemColor: Colors.grey,
+          currentIndex: _selectedIndex,
+          onTap: (idx) {
+            setState(() => _selectedIndex = idx);
+            switch (idx) {
+              case 0: Navigator.pushReplacementNamed(context, '/main'); break;
+              case 1: break;
+              case 2: Navigator.pushReplacementNamed(context, '/scenarios'); break;
+              case 3: Navigator.pushReplacementNamed(context, '/settings'); break;
+            }
+          },
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_outlined),
+              label: t.t("Home"),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.call_outlined),
+              label: t.t("Calls"),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.fact_check_outlined),
+              label: t.t("Scenarios"),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings_outlined),
+              label: t.t("Settings"),
+            ),
+          ],
         ),
       ),
     );
