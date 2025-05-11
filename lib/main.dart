@@ -1,14 +1,14 @@
 import 'dart:convert';
-import 'package:axilon_m/pages/admin_page.dart';
-import 'package:axilon_m/pages/create_scenario_page.dart';
-import 'package:axilon_m/pages/edit_scenario_page.dart';
-import 'package:axilon_m/pages/main_page.dart';
-import 'package:axilon_m/pages/scenario_chat_page.dart';
-import 'package:axilon_m/pages/scenarios_page.dart';
-import 'package:axilon_m/pages/settings_page.dart';
-import 'package:axilon_m/pages/stats_page.dart';
-import 'package:axilon_m/pages/tasks_page.dart';
-import 'package:axilon_m/services/notification_service.dart';
+import 'package:axilon_mini_m/pages/admin_page.dart';
+import 'package:axilon_mini_m/pages/create_scenario_page.dart';
+import 'package:axilon_mini_m/pages/edit_scenario_page.dart';
+import 'package:axilon_mini_m/pages/main_page.dart';
+import 'package:axilon_mini_m/pages/scenario_chat_page.dart';
+import 'package:axilon_mini_m/pages/scenarios_page.dart';
+import 'package:axilon_mini_m/pages/settings_page.dart';
+import 'package:axilon_mini_m/pages/stats_page.dart';
+import 'package:axilon_mini_m/pages/tasks_page.dart';
+import 'package:axilon_mini_m/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

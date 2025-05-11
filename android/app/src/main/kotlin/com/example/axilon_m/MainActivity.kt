@@ -1,4 +1,4 @@
-package com.example.axilon_m
+package com.example.axilon_mini_m
 
 import io.flutter.embedding.android.FlutterActivity
 

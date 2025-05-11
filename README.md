@@ -1,4 +1,4 @@
-# axilon_m
+# axilon_mini_m
 
 A new Flutter project.
 
