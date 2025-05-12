@@ -200,7 +200,7 @@ class _ScenariosPageState extends State<ScenariosPage> {
                       MaterialPageRoute(
                         builder: (_) => ResumeScenarioPage(
                           scenarioId: scn['id'],
-                          chatId:      chatId,
+                          // chatId:      chatId,
                         ),
                       ),
                     );

@@ -207,16 +207,17 @@ class _ScenarioChatPageState extends State<ScenarioChatPage> with TickerProvider
       time: DateTime.now(),
     ));
     _inputController.clear();
-
     // 2) call your BE
     final auth = Provider.of<AuthProvider>(context, listen: false);
+    print("Auth:");
+    print(auth.user!['user_id']);
     final resp = await http.post(
       Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/scenario-chat/message'),
       headers: {
         'Authorization': 'Bearer ${auth.token}',
         'Content-Type': 'application/json',
       },
-      body: jsonEncode({'chat_id': _chatId, 'content': text.trim(), 'user_id': _userId}),
+      body: jsonEncode({'chat_id': _chatId, 'content': text.trim(), 'user_id': auth.user!['user_id']}),
     );
 
     if (resp.statusCode == 200) {
@@ -261,7 +262,7 @@ class _ScenarioChatPageState extends State<ScenarioChatPage> with TickerProvider
             MaterialPageRoute(
               builder: (_) => ResumeScenarioPage(
                 scenarioId: newScenarioId,
-                chatId: _chatId,
+                // chatId: _chatId,
               ),
             ),
           );
