@@ -216,7 +216,7 @@ class _ScenarioChatPageState extends State<ScenarioChatPage> with TickerProvider
         'Authorization': 'Bearer ${auth.token}',
         'Content-Type': 'application/json',
       },
-      body: jsonEncode({'chat_id': _chatId, 'content': text.trim()}),
+      body: jsonEncode({'chat_id': _chatId, 'content': text.trim(), 'user_id': _userId}),
     );
 
     if (resp.statusCode == 200) {
