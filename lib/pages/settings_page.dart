@@ -423,6 +423,7 @@ class _SettingsPageState extends State<SettingsPage>
     },
   ];
   String? chosenAgent;
+  bool _selecting = false;
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   // ---------------------------------------------------------
@@ -2320,77 +2321,94 @@ class _SettingsPageState extends State<SettingsPage>
           ),
           const SizedBox(height: 16),
           // Grid of assistants
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: assistants.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              childAspectRatio: 0.65,
-            ),
-            itemBuilder: (ctx, index) {
-              final assistant = assistants[index];
-              final isSelected =
-                  chosenAgent?.startsWith(assistant['type']!) ?? false;
+          Stack(
+             children: [
+               GridView.builder(
+                 shrinkWrap: true,
+                 physics: _selecting
+                     ? const NeverScrollableScrollPhysics()  // disable scroll while selecting
+                     : const NeverScrollableScrollPhysics(),
+                 itemCount: assistants.length,
+                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                   crossAxisCount: 2,
+                   mainAxisSpacing: 16,
+                   crossAxisSpacing: 16,
+                   childAspectRatio: 0.65,
+                 ),
+                 itemBuilder: (ctx, index) {
+                   final assistant = assistants[index];
+                   final isSelected =
+                       chosenAgent?.startsWith(assistant['type']!) ?? false;
 
-              return GestureDetector(
-                onTap: () => _selectAgent(
-                  assistant['type']!,
-                  assistant['prompt']!,
-                  assistant['audio']!,
-                  assistant['voice']!,
-                ),
-                child: Card(
-                  color: isSelected ? Colors.indigo.shade50 : Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  elevation: isSelected ? 4 : 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      children: [
-                        // Assistant image
-                        SizedBox(
-                          height: 100,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.asset(
-                              assistant['image']!,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          translationProvider.t(assistant['name']!),
-                          style: TextStyle(
-                            fontFamily: 'DrukTextWideLCG',
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: isSelected ? Colors.indigo : Colors.black,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        Align(
-                          alignment: Alignment.bottomRight,
-                          child: Icon(
-                            isSelected
-                                ? Icons.check_circle
-                                : Icons.radio_button_unchecked,
-                            color: isSelected ? Colors.indigo : Colors.grey,
-                            size: 2,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
+                   return GestureDetector(
+                     onTap: _selecting
+                         ? null                              // disable taps while selecting
+                         : () => _selectAgent(
+                               assistant['type']!,
+                               assistant['prompt']!,
+                               assistant['audio']!,
+                               assistant['voice']!,
+                             ),
+                     child: Card(
+                       color: isSelected ? Colors.indigo.shade50 : Colors.white,
+                       shape: RoundedRectangleBorder(
+                         borderRadius: BorderRadius.circular(10),
+                       ),
+                       elevation: isSelected ? 4 : 2,
+                       child: Padding(
+                         padding: const EdgeInsets.all(12.0),
+                         child: Column(
+                           children: [
+                             SizedBox(
+                               height: 100,
+                               child: ClipRRect(
+                                 borderRadius: BorderRadius.circular(8),
+                                 child: Image.asset(
+                                   assistant['image']!,
+                                   fit: BoxFit.cover,
+                                 ),
+                               ),
+                             ),
+                             const SizedBox(height: 12),
+                             Text(
+                               translationProvider.t(assistant['name']!),
+                               style: TextStyle(
+                                 fontFamily: 'DrukTextWideLCG',
+                                 fontSize: 16,
+                                 fontWeight: FontWeight.bold,
+                                 color: isSelected ? Colors.indigo : Colors.black,
+                               ),
+                               textAlign: TextAlign.center,
+                             ),
+                             Align(
+                               alignment: Alignment.bottomRight,
+                               child: Icon(
+                                 isSelected
+                                     ? Icons.check_circle
+                                     : Icons.radio_button_unchecked,
+                                 color: isSelected ? Colors.indigo : Colors.grey,
+                                 size: 20,  // corrected size
+                               ),
+                             ),
+                           ],
+                         ),
+                       ),
+                     ),
+                  );
+                },
+         ),
+
+         // Spinner overlay when selecting
+         if (_selecting)
+           Positioned.fill(
+             child: Container(
+               color: Colors.black38,
+               alignment: Alignment.center,
+               child: const CircularProgressIndicator(),
+             ),
+           ),
+       ],
+     ),
         ],
       ),
     );

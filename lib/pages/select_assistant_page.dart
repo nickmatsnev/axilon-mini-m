@@ -349,6 +349,7 @@ You are Genie, a professional smartphone secretary modeled after the charismatic
   ];
 
   String? chosenAgent;
+  bool _selecting = false;
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
@@ -382,6 +383,8 @@ You are Genie, a professional smartphone secretary modeled after the charismatic
   }
 
   Future<void> _selectAgent(String agentType, String prompt, String audioPath, String voice) async {
+    if (_selecting) return;
+    setState(() => _selecting = true);
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     try {
@@ -412,15 +415,18 @@ You are Genie, a professional smartphone secretary modeled after the charismatic
             content: Text('${agentType.toUpperCase()} ${translationProvider.t("selected successfully!")}'),
           ),
         );
-
+        setState(() => _selecting = false);
         // Play the corresponding audio file
         await _audioPlayer.play(AssetSource(audioPath));
       } else {
+        setState(() => _selecting = false);
         print('Error selecting agent: ${response.body}');
       }
     } catch (e) {
+      setState(() => _selecting = false);
       print('Error: $e');
     }
+    setState(() => _selecting = false);
   }
 
   @override
@@ -435,7 +441,7 @@ You are Genie, a professional smartphone secretary modeled after the charismatic
         foregroundColor: Colors.white,
       ),
       // drawer: buildDrawer(context),
-      body: ListView.builder(
+      body: Stack(children: [ListView.builder(physics: _selecting ? NeverScrollableScrollPhysics() : null,
         itemCount: assistants.length,
         itemBuilder: (context, index) {
           final assistant = assistants[index];
@@ -464,7 +470,7 @@ You are Genie, a professional smartphone secretary modeled after the charismatic
                 isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
                 color: isSelected ? Colors.indigo : Colors.grey,
               ),
-              onTap: () => _selectAgent(
+              onTap: _selecting ? null : () => _selectAgent(
                 assistant['type']!,
                 assistant['prompt']!,
                 assistant['audio']!,
@@ -474,6 +480,15 @@ You are Genie, a professional smartphone secretary modeled after the charismatic
           );
         },
       ),
+    if (_selecting)
+         Positioned.fill(
+           child: Container(
+             color: Colors.black38,
+             alignment: Alignment.center,
+             child: CircularProgressIndicator(),
+           ),
+         ),
+     ]),
       // Added button to navigate to "/main"
       floatingActionButton: FloatingActionButton(
         onPressed: () {
