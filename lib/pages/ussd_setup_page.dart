@@ -53,9 +53,9 @@ class UssdSetupPage extends StatelessWidget {
         ];
       } else if (phoneNumber.startsWith("7")) {
         return [
-          "Dial **61*+79014686753**20# to set up call forwarding for no answer.",
-          "Dial **62*+79014686753# to set up call forwarding for unreachable.",
-          "Dial **67*+79014686753# to set up call forwarding for busy.",
+          "Dial **61*+79014172717**20# to set up call forwarding for no answer.",
+          "Dial **62*+79014172717# to set up call forwarding for unreachable.",
+          "Dial **67*+79014172717# to set up call forwarding for busy.",
         ];
       }
     }
@@ -147,7 +147,7 @@ class UssdInfoWidget extends StatelessWidget {
       } else if (phoneNumber!.startsWith("357")) {
         return ["Dial **61*25030950**20# to set up call forwarding for no answer.\nDial **62*25030950# to set up call forwarding for unreachable.\nDial **67*25030950# to set up call forwarding for busy."];
       } else if (phoneNumber!.startsWith("7")) {
-        return ["Dial **61*+79014686753**20# to set up call forwarding for no answer.\nDial **62*+79014686753# to set up call forwarding for unreachable.\nDial **67*+79014686753# to set up call forwarding for busy."];
+        return ["Dial **61*+79014172717**20# to set up call forwarding for no answer.\nDial **62*+79014172717# to set up call forwarding for unreachable.\nDial **67*+79014172717# to set up call forwarding for busy."];
       }
     }
     return ["Dial **61*2369362050**20# to set up call forwarding for no answer."];

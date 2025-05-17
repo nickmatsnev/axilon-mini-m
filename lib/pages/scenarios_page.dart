@@ -213,8 +213,7 @@ class _ScenariosPageState extends State<ScenariosPage> {
               ),
             );
           },
-        ),
-          ])
+        ),])
       ),
       // 1) Tell Scaffold to float at its end.
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
