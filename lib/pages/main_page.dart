@@ -167,6 +167,24 @@ class _MainPageState extends State<MainPage> {
     if (mins > 0) return '${mins}m ${secs}s';
     return '${secs}s';
   }
+  Future<void> _toggleStatus(int index) async {
+    final scn = _scenarios[index];
+    final id = scn['id'];
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final resp = await http.put(
+      Uri.parse(
+          'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/toggle/$id'),
+      headers: {'Authorization': 'Bearer ${auth.token}'},
+    );
+    if (resp.statusCode == 200) {
+      final body = jsonDecode(resp.body);
+      setState(() => _scenarios[index]['status'] = body['status']);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Toggle failed (${resp.statusCode})')),
+      );
+    }
+  }
 
   int _selectedIndex = 0;
   void _onItemTapped(int idx) {
@@ -347,28 +365,55 @@ class _MainPageState extends State<MainPage> {
                                     Text(t.t("No scenarios found"))
                                   else
                                     Column(
-                                      children: _scenarios.map((scn) {
-                                        return GestureDetector(
-                                          onTap: () => Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (_) => EditScenarioPage(scenarioId: scn['id']),
-                                            ),
+                                      children: _scenarios
+                                          .asMap()
+                                          .entries
+                                          .map((entry) {
+                                        final idx = entry.key;
+                                        final scn = entry.value;
+                                        return Container(
+                                          margin: const EdgeInsets.symmetric(vertical: 6),
+                                          padding: const EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(8),
                                           ),
-                                          child: Container(
-                                            margin: const EdgeInsets.symmetric(vertical:6),
-                                            padding: const EdgeInsets.all(8),
-                                            decoration: BoxDecoration(
-                                                color:Colors.white,
-                                                borderRadius: BorderRadius.circular(8)
-                                            ),
-                                            child: ListTile(
-                                              title: Text(_cleanAndTitle(scn['scenario_name']) ?? '---'),
-                                              subtitle: Text(scn['summary'] ?? '---'),
-                                            ),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: GestureDetector(
+                                                  onTap: () => Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (_) => EditScenarioPage(
+                                                        scenarioId: scn['id'],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        _cleanAndTitle(scn['scenario_name']) ?? '—',
+                                                        style: const TextStyle(
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 4),
+                                                      Text(scn['summary'] ?? '—'),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              Switch.adaptive(
+                                                value: scn['status'] as bool,
+                                                onChanged: (_) => _toggleStatus(idx),
+                                              ),
+                                            ],
                                           ),
                                         );
-                                      }).toList(),
+                                      })
+                                          .toList(),
                                     ),
                                   const SizedBox(height:8),
                                   Align(

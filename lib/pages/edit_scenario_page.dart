@@ -30,7 +30,7 @@ class _EditScenarioPageState extends State<EditScenarioPage> {
   DateTime? _schedStart, _execTime, _till;
   bool _loading = true, _submitting = false;
 
-  final _types = ['chat','voice','call'];
+  final _types = ['chat','voice'];
   final _modes = ['single','repeating'];
   final _intervals = ['Hourly','Daily','Weekly'];
   final _intervalMap = {'Hourly':'1 hour','Daily':'1 day','Weekly':'1 week'};
@@ -89,11 +89,6 @@ class _EditScenarioPageState extends State<EditScenarioPage> {
       'summary':_summaryCtrl.text.trim(),
       'status':true,
       'scenario_type':_type,
-      'till':_till?.toIso8601String(),
-      'repeating': _type=='call' ? (_callMode=='repeating') : null,
-      'exec_time': _type=='call' && _callMode=='single' ? _execTime?.toIso8601String() : null,
-      'scheduled_start': _type=='call' && _callMode=='repeating' ? _schedStart?.toIso8601String() : null,
-      'scheduled_interval': _type=='call' && _callMode=='repeating' ? _intervalMap[_interval] : null,
       'add_to_chat_prompt': _type=='chat',
       'add_to_voice_prompt': _type=='voice',
       'prompt_value':_promptCtrl.text.trim(),

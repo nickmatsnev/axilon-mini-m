@@ -135,6 +135,26 @@ class _ScenariosPageState extends State<ScenariosPage> {
     }
     setState(() => _isLoading = false);
   }
+
+  Future<void> _toggleStatus(int idx) async {
+    final scn = _scenarios[idx];
+    final id = scn['id'];
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final resp = await http.put(
+      Uri.parse(
+          'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/toggle/$id'),
+      headers: {'Authorization': 'Bearer ${auth.token}'},
+    );
+    if (resp.statusCode == 200) {
+      final body = jsonDecode(resp.body);
+      setState(() => _scenarios[idx]['status'] = body['status']);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Toggle failed (${resp.statusCode})')),
+      );
+    }
+  }
+
   String _cleanAndTitle(String raw) {
     String extracted;
     try {
@@ -152,8 +172,8 @@ class _ScenariosPageState extends State<ScenariosPage> {
   @override
   Widget build(BuildContext context) {
     final t = Provider.of<TranslationProvider>(context);
-    final bottomBarHeight = 60.0; // same as your BottomAppBar height
-    final extraPadding = 16.0;    // gap between FAB and bottom bar
+    final bottomBarHeight = 0; // same as your BottomAppBar height
+    final extraPadding = 0;    // gap between FAB and bottom bar
     return Scaffold(
       appBar: AppBar(
         title: Text(t.t('My Scenarios')),
@@ -168,52 +188,57 @@ class _ScenariosPageState extends State<ScenariosPage> {
             : Stack(children:[
               ListView.builder(
           itemCount: _scenarios.length,
-          itemBuilder: (_, i) {
-            final scn = _scenarios[i];
-            return Card(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: ListTile(
-                title: Text(_cleanAndTitle(scn['scenario_name']) ?? '—'),
-                subtitle: Text(scn['summary'] ?? '—'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () async {
-                  final auth     = Provider.of<AuthProvider>(context, listen: false);
-                  final token    = auth.token!;
-                  final userId   = auth.user!['user_id'];
-                  // Always ask BE to create (or fetch) a scenario‐chat for this scenario:
-                  final resp = await http.post(
-                    Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/scenario-chat/create'),
-                    headers: {
-                      'Authorization': 'Bearer $token',
-                      'Content-Type':  'application/json',
-                    },
-                    body: jsonEncode({
-                      'user_id':    userId,
-                      'scenario_id': scn['id'],      // ← pass scenarioId so BE can reuse/create
-                    }),
-                  );
-                  if (resp.statusCode == 200) {
-                    final data   = jsonDecode(resp.body);
-                    final chatId = data['chat']['chat_id'].toString();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ResumeScenarioPage(
-                          scenarioId: scn['id'],
-                          // chatId:      chatId,
-                        ),
+                itemBuilder: (_, i) {
+                  final scn = _scenarios[i];
+                  return Card(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: ListTile(
+                      title: Text(_cleanAndTitle(scn['scenario_name']) ?? '—'),
+                      subtitle: Text(scn['summary'] ?? '—'),
+                      trailing: Switch.adaptive(
+                        value: scn['status'] as bool,
+                        onChanged: (_) => _toggleStatus(i),
                       ),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Failed to load scenario chat.')),
-                    );
-                  }
+                      onTap: () async {
+                        final auth   = Provider.of<AuthProvider>(context, listen: false);
+                        final token  = auth.token!;
+                        final userId = auth.user!['user_id'];
+                        final resp = await http.post(
+                          Uri.parse(
+                              'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/scenario-chat/create'
+                          ),
+                          headers: {
+                            'Authorization': 'Bearer $token',
+                            'Content-Type':  'application/json',
+                          },
+                          body: jsonEncode({
+                            'user_id':     userId,
+                            'scenario_id': scn['id'],
+                          }),
+                        );
+                        if (resp.statusCode == 200) {
+                          final data   = jsonDecode(resp.body);
+                          final chatId = data['chat']['chat_id'].toString();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ResumeScenarioPage(
+                                scenarioId: scn['id'],
+                                // chatId:      chatId,
+                              ),
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Failed to load scenario chat.')),
+                          );
+                        }
+                      },
+                    ),
+                  );
                 },
-              ),
-            );
-          },
-        ),])
+
+              ),])
       ),
       // 1) Tell Scaffold to float at its end.
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
