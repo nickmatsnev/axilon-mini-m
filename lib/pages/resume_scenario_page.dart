@@ -426,7 +426,7 @@ class _ResumeScenarioPageState extends State<ResumeScenarioPage>
                   child: TextField(
                     controller: _inputController,
                     decoration: InputDecoration(
-                      hintText: t.t("Your answer…"),
+                      hintText: t.t("Your answer..."),
                       border: InputBorder.none,
                       contentPadding:
                       const EdgeInsets.symmetric(horizontal: 12),

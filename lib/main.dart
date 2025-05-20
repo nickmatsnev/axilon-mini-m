@@ -134,7 +134,7 @@ void main() async {
   // Initialize translation
   final translationProvider = TranslationProvider();
   print('user = ${authProvider.user}');
-  final userLang = authProvider.user?['lang'] as String? ?? 'en';
+  final userLang = authProvider.user?['lang'] as String? ?? 'ru';
   await translationProvider.loadLanguage(userLang);
 
   runApp(

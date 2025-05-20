@@ -142,7 +142,7 @@ class _LoginPageState extends State<LoginPage> {
                               completePhoneNumber!,
                               passwordController.text,
                             );
-                            final userLang = await Provider.of<AuthProvider>(context, listen: false).user?['lang'] ?? 'en';
+                            final userLang = await Provider.of<AuthProvider>(context, listen: false).user?['lang'] ?? 'ru';
 
                             // Now grab your TranslationProvider from the context
                             final translation = Provider.of<TranslationProvider>(context, listen: false);

@@ -42,10 +42,10 @@ class _ScenarioChatPageState extends State<ScenarioChatPage> with TickerProvider
 
   /// your hard-coded default suggestions
   List<String> _initialSuggestions = [
-    "Tell couriers to place parcel behind the fence",
-    "Tell everyone who calls from 20:00 to 6:00 that I am unavailable",
-    "Add a joke to the end of each of your messages",
-    "Call my grandpa at +420731048150 every 6pm to ask if he needs anything",
+    "Если я не ответил - пишите...",
+    "Если звонит курьер...",
+    "С 23:00 до 9:00 не беспокоить, перезвоню",
+    "В отпуске с ..."
   ];
 
   Map<String, String> _contactsMap = {};
@@ -104,11 +104,11 @@ class _ScenarioChatPageState extends State<ScenarioChatPage> with TickerProvider
       context: context,
       barrierDismissible: false,
       builder: (_) => AlertDialog(
-        title: const Text('Are you sure?'),
-        content: const Text('Unsaved progress will be lost!'),
+        title: const Text('Вы уверены?'),
+        content: const Text('Если вы не создали сценарий, то прогресс будет утерян!'),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Stay')),
-          TextButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Leave')),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Остаться')),
+          TextButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Уйти')),
         ],
       ),
     );
@@ -431,7 +431,7 @@ class _ScenarioChatPageState extends State<ScenarioChatPage> with TickerProvider
                   child: TextField(
                     controller: _inputController,
                     decoration: InputDecoration(
-                      hintText: t.t("Your answer…"),
+                      hintText: t.t("Your answer..."),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 12),
                     ),

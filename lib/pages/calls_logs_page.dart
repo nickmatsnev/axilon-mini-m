@@ -92,7 +92,7 @@ class _CallLogsPageState extends State<CallLogsPage> {
   bool _hasFetchedLanguage = false;
 
   // filter
-  String _filterCategory = 'All';
+  String _filterCategory = 'Все';
 
   @override
   void initState() {
@@ -318,12 +318,12 @@ class _CallLogsPageState extends State<CallLogsPage> {
     final t = Provider.of<TranslationProvider>(context, listen: true);
 
     // build category filter list
-    final cats = <String>{'All'};
+    final cats = <String>{'Все'};
     for (var c in _callLogs) {
       final cat = (c['category'] as String?)?.trim();
       if (cat != null && cat.isNotEmpty) cats.add(cat);
     }
-    final filteredLogs = _filterCategory == 'All'
+    final filteredLogs = _filterCategory == 'Все'
         ? _callLogs
         : _callLogs.where((c) => (c['category'] ?? '') == _filterCategory).toList();
     final grouped = _groupCallsByTime(filteredLogs);

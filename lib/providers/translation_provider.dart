@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 class TranslationProvider extends ChangeNotifier {
   final String baseUrl = 'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api';
   Map<String, String>? _localizedStrings;
-  String _currentLang = 'en'; // default to English
+  String _currentLang = 'ru'; // default to English
 
   String get currentLang => _currentLang;
 
@@ -66,7 +66,7 @@ class TranslationProvider extends ChangeNotifier {
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final lang = data['lang'] ?? 'en';
+        final lang = data['lang'] ?? 'ru';
         print("received lang is ${lang}");
         await loadLanguage(lang);
       } else {

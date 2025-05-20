@@ -250,126 +250,6 @@ class _SettingsPageState extends State<SettingsPage>
     }
   }
 
-  // Build the entire Voice Cloning section (record OR pick)
-  Widget _buildVoiceCloningSection() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: const Color.fromRGBO(105, 125, 255, 0.2),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      padding: const EdgeInsets.all(16.0),
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Title
-          Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(Icons.record_voice_over, color: Colors.indigo),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  "Voice Cloning",
-                  style: const TextStyle(
-                    fontFamily: 'DrukTextWideLCG',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-
-          // name
-          TextField(
-            controller: _voiceNameController,
-            decoration: const InputDecoration(
-              labelText: "Voice Name",
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // description
-          TextField(
-            controller: _voiceDescriptionController,
-            decoration: const InputDecoration(
-              labelText: "Voice Description",
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // row of two buttons: Record or Pick
-          Row(
-            children: [
-              // record
-              ElevatedButton.icon(
-                onPressed: _isRecording ? _stopRecording : _startRecording,
-                icon: Icon(_isRecording ? Icons.stop : Icons.mic),
-                label: Text(_isRecording ? "Stop Recording" : "Record Audio"),
-              ),
-              const SizedBox(width: 16),
-              // pick
-              ElevatedButton.icon(
-                onPressed: _pickAudioFile,
-                icon: const Icon(Icons.audiotrack),
-                label: const Text("Pick File"),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-
-          // status text re: selected/recorded
-          Text(
-            _isRecording
-                ? "Recording in progress..."
-                : _recordedFilePath != null
-                ? "Recorded file: $_recordedFilePath"
-                : _selectedFile != null
-                ? "Selected file: ${_selectedFile!.name}"
-                : "No audio selected/recorded",
-            style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
-          ),
-          const SizedBox(height: 20),
-
-          // Submit button
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.indigo,
-              minimumSize: const Size(double.infinity, 50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            onPressed: _isCloningVoiceFile ? null : _cloneVoiceFile,
-            child: _isCloningVoiceFile
-                ? const CircularProgressIndicator(color: Colors.white)
-                : const Text(
-              "Clone My Voice",
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: 'DrukTextWideLCG',
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   // ---------------------------------------------------------
   //  PROFILE FIELDS
@@ -606,6 +486,7 @@ class _SettingsPageState extends State<SettingsPage>
 
   Future<void> _selectAgent(
       String agentType, String prompt, String audioPath, String voice) async {
+    setState(() => _selecting = true);
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     try {
@@ -646,6 +527,8 @@ class _SettingsPageState extends State<SettingsPage>
       }
     } catch (e) {
       print('Error: $e');
+    }finally {
+      setState(() => _selecting = false);
     }
   }
 
@@ -2058,17 +1941,17 @@ class _SettingsPageState extends State<SettingsPage>
                         child: _buildAgentPromptSection(),
                       ),
 
-                      // AGENT PHONE PROMPT
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: _buildAgentPhonePromptSection(),
-                      ),
+                      // // AGENT PHONE PROMPT
+                      // Padding(
+                      //   padding: const EdgeInsets.all(16.0),
+                      //   child: _buildAgentPhonePromptSection(),
+                      // ),
 
-                      // VOICE CLONING
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: _buildVoiceCloningSection(),
-                      ),
+                      // // VOICE CLONING
+                      // Padding(
+                      //   padding: const EdgeInsets.all(16.0),
+                      //   child: _buildVoiceCloningSection(),
+                      // ),
                       // PROFILE SECTION
                       Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -2326,7 +2209,7 @@ class _SettingsPageState extends State<SettingsPage>
                GridView.builder(
                  shrinkWrap: true,
                  physics: _selecting
-                     ? const NeverScrollableScrollPhysics()  // disable scroll while selecting
+                     ? const NeverScrollableScrollPhysics()
                      : const NeverScrollableScrollPhysics(),
                  itemCount: assistants.length,
                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -2342,13 +2225,13 @@ class _SettingsPageState extends State<SettingsPage>
 
                    return GestureDetector(
                      onTap: _selecting
-                         ? null                              // disable taps while selecting
+                         ? null
                          : () => _selectAgent(
-                               assistant['type']!,
-                               assistant['prompt']!,
-                               assistant['audio']!,
-                               assistant['voice']!,
-                             ),
+                       assistant['type']!,
+                       assistant['prompt']!,
+                       assistant['audio']!,
+                       assistant['voice']!,
+                     ),
                      child: Card(
                        color: isSelected ? Colors.indigo.shade50 : Colors.white,
                        shape: RoundedRectangleBorder(
@@ -2399,14 +2282,15 @@ class _SettingsPageState extends State<SettingsPage>
          ),
 
          // Spinner overlay when selecting
-         if (_selecting)
-           Positioned.fill(
-             child: Container(
-               color: Colors.black38,
-               alignment: Alignment.center,
-               child: const CircularProgressIndicator(),
-             ),
-           ),
+               // overlay spinner
+               if (_selecting)
+                 Positioned.fill(
+                   child: Container(
+                     color: Colors.black38,
+                     alignment: Alignment.center,
+                     child: const CircularProgressIndicator(),
+                   ),
+                 ),
        ],
      ),
         ],
@@ -2414,78 +2298,6 @@ class _SettingsPageState extends State<SettingsPage>
     );
   }
 
-  Widget _buildAgentPhonePromptSection() {
-    final translationProvider = Provider.of<TranslationProvider>(context);
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: const Color.fromRGBO(105, 125, 255, 0.2),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      padding: const EdgeInsets.all(16.0),
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Title row with edit icon
-          Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(Icons.phonelink_ring_outlined, color: Colors.indigo),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  translationProvider.t("Edit Agent Phone Prompt"),
-                  style: const TextStyle(
-                    fontFamily: 'DrukTextWideLCG',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: agentPhonePromptController,
-            maxLines: 5,
-            decoration: InputDecoration(
-              labelText: translationProvider.t("Agent Phone Prompt"),
-              border: const OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.indigo,
-              minimumSize: const Size(double.infinity, 50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            onPressed: _updatePhoneAgentPrompt,
-            child: Text(
-              translationProvider.t("Save Agent Phone Prompt"),
-              style: const TextStyle(
-                color: Colors.white,
-                fontFamily: 'DrukTextWideLCG',
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
   Widget _buildAgentPromptSection() {
     final translationProvider = Provider.of<TranslationProvider>(context);
     return Container(
