@@ -105,7 +105,10 @@ class _CallDetailsPageState extends State<CallDetailsPage> {
 
   /// Called by a Play/Pause button to toggle call audio.
   Future<void> _playPauseAudio() async {
-    final audioUrl = widget.call['audio'];
+    final raw = widget.call['audio'] as String? ?? '';
+    final audioUrl = raw.startsWith('http')
+        ? raw
+        : 'https://axilon-mini-be-e5732e59dadc.herokuapp.com$raw';
     if (audioUrl == null || audioUrl.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('No audio for this call')),
@@ -113,18 +116,28 @@ class _CallDetailsPageState extends State<CallDetailsPage> {
       return;
     }
 
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final token = authProvider.token ?? "";
+
     if (!_isPlaying) {
       try {
         await _audioPlayer.stop();
-        // Set URL and then play.
-        await _audioPlayer.setUrl(audioUrl);
+        // 3) set AudioSource with headers
+        await _audioPlayer.setAudioSource(
+          AudioSource.uri(
+            Uri.parse(audioUrl),
+            headers: {
+              'Authorization': 'Bearer $token',
+              // add any other headers your server requires
+            },
+          ),
+        );
         await _audioPlayer.play();
         setState(() => _isPlaying = true);
       } catch (e) {
         debugPrint('Error playing audio: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Playback error: $e')),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Playback error: $e')));
       }
     } else {
       await _audioPlayer.stop();
@@ -330,7 +343,7 @@ class _CallDetailsPageState extends State<CallDetailsPage> {
                       if (call['summary'] != null && call['summary'].toString().trim().isNotEmpty) ...[
                         const SizedBox(height: 20),
                         Text(
-                          translationProvider.t('SUMMARY:'),
+                          translationProvider.t('SUMMARY')+ ':',
                           style: const TextStyle(
                             fontFamily: 'DrukTextWideLCG',
                             fontSize: 16,
@@ -350,7 +363,7 @@ class _CallDetailsPageState extends State<CallDetailsPage> {
                         Row(
                           children: [
                             Text(
-                              translationProvider.t("Audio:"),
+                              "Аудио:",
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,

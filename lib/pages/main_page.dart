@@ -1,3 +1,4 @@
+import 'package:axilon_mini_m/pages/resume_scenario_page.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:intl/intl.dart';
@@ -385,7 +386,7 @@ class _MainPageState extends State<MainPage> {
                                                   onTap: () => Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
-                                                      builder: (_) => EditScenarioPage(
+                                                      builder: (_) => ResumeScenarioPage(
                                                         scenarioId: scn['id'],
                                                       ),
                                                     ),
