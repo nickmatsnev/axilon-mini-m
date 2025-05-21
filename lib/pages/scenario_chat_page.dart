@@ -349,7 +349,7 @@ class _ScenarioChatPageState extends State<ScenarioChatPage> with TickerProvider
           ],
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
-              t.t("Build Scenario"),
+              t.t("Сценарий"),
               style: const TextStyle(fontFamily: 'DrukTextWideLCG', fontSize: 14, fontWeight: FontWeight.bold),
             ),
             Text(_assistantName ?? t.t("Assistant"),

@@ -24,13 +24,13 @@ class _EditScenarioPageState extends State<EditScenarioPage> {
   final _execTimeCtrl = TextEditingController();
   final _tillCtrl = TextEditingController();
 
-  String _type = 'chat';
+  String _type = 'voice';
   String _callMode = 'single';
   String _interval = 'Hourly';
   DateTime? _schedStart, _execTime, _till;
   bool _loading = true, _submitting = false;
 
-  final _types = ['chat','voice'];
+  final _types = ['voice'];
   final _modes = ['single','repeating'];
   final _intervals = ['Hourly','Daily','Weekly'];
   final _intervalMap = {'Hourly':'1 hour','Daily':'1 day','Weekly':'1 week'};
@@ -52,7 +52,7 @@ class _EditScenarioPageState extends State<EditScenarioPage> {
       setState(() {
         _nameCtrl.text = s['scenario_name'] ?? '';
         _summaryCtrl.text = s['summary'] ?? '';
-        _type = s['scenario_type'] ?? 'chat';
+        _type = s['scenario_type'] ?? 'voice';
         _promptCtrl.text = s['prompt_value'] ?? '';
         _schedStart = s['scheduled_start']!=null ? DateTime.parse(s['scheduled_start']) : null;
         _schedStartCtrl.text = _schedStart!=null ? DateFormat('yyyy-MM-dd HH:mm').format(_schedStart!) : '';
@@ -89,7 +89,6 @@ class _EditScenarioPageState extends State<EditScenarioPage> {
       'summary':_summaryCtrl.text.trim(),
       'status':true,
       'scenario_type':_type,
-      'add_to_chat_prompt': _type=='chat',
       'add_to_voice_prompt': _type=='voice',
       'prompt_value':_promptCtrl.text.trim(),
     };
@@ -115,7 +114,7 @@ class _EditScenarioPageState extends State<EditScenarioPage> {
     if(_loading) return const Scaffold(body: Center(child:CircularProgressIndicator()));
     return Scaffold(
       appBar: AppBar(
-        title: Text(t.t('Edit Scenario')),
+        title: Text(t.t('Изменить сценарий')),
         backgroundColor: const Color(0xFFE8EDFF),
         foregroundColor: Colors.black,
       ),
@@ -166,7 +165,7 @@ class _EditScenarioPageState extends State<EditScenarioPage> {
                 ),
                 const SizedBox(height:12),
                 // conditional fields...
-                if(_type=='chat'||_type=='voice')...[
+                if(_type=='voice')...[
                   TextFormField(
                       controller:_promptCtrl,
                       decoration: InputDecoration(

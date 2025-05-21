@@ -70,7 +70,7 @@ class _ScenarioAdminWidgetState extends State<ScenarioAdminWidget> {
     await showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text(existing == null ? 'Add Scenario' : 'Edit Scenario'),
+        title: Text(existing == null ? 'Добавить сценарий' : 'Редактировать сценарий'),
         content: Form(
           key: _formKey,
           child: Column(
@@ -78,13 +78,13 @@ class _ScenarioAdminWidgetState extends State<ScenarioAdminWidget> {
             children: [
               TextFormField(
                 initialValue: title,
-                decoration: const InputDecoration(labelText: 'Name'),
+                decoration: const InputDecoration(labelText: 'Имя'),
                 onSaved: (v) => title = v?.trim() ?? '',
-                validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+                validator: (v) => v == null || v.isEmpty ? 'Необходимо' : null,
               ),
               TextFormField(
                 initialValue: description,
-                decoration: const InputDecoration(labelText: 'Description'),
+                decoration: const InputDecoration(labelText: 'Описание'),
                 onSaved: (v) => description = v?.trim() ?? '',
               ),
             ],
@@ -93,7 +93,7 @@ class _ScenarioAdminWidgetState extends State<ScenarioAdminWidget> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('Отменить'),
           ),
           ElevatedButton(
             onPressed: () async {

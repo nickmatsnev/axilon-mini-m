@@ -359,7 +359,7 @@ class _ResumeScenarioPageState extends State<ResumeScenarioPage>
           ],
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
-              t.t("Build Scenario"),
+              t.t("Сценарий"),
               style: const TextStyle(
                   fontFamily: 'DrukTextWideLCG',
                   fontSize: 14,
