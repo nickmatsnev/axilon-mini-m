@@ -27,7 +27,7 @@ class ChatMessage {
 }
 
 class ScenarioChatPage extends StatefulWidget {
-  const ScenarioChatPage({Key? key}) : super(key: key);
+  const ScenarioChatPage({super.key});
 
   @override
   State<ScenarioChatPage> createState() => _ScenarioChatPageState();
@@ -48,11 +48,9 @@ class _ScenarioChatPageState extends State<ScenarioChatPage> with TickerProvider
     "В отпуске с ..."
   ];
 
-  Map<String, String> _contactsMap = {};
   late stt.SpeechToText _speech;
-  bool _speechEnabled = false, _isRecording = false;
+  final bool _isRecording = false;
   Timer? _recordingTimer;
-  int _timeLeft = 0;
 
   late String _userId;
   String? _assistantName, _assistantImage;
@@ -184,7 +182,6 @@ class _ScenarioChatPageState extends State<ScenarioChatPage> with TickerProvider
         map[num] = c.displayName;
       }
     }
-    setState(() => _contactsMap = map);
   }
 
   void _onSuggestionTap(String s) {
@@ -226,8 +223,6 @@ class _ScenarioChatPageState extends State<ScenarioChatPage> with TickerProvider
       // 👇 read `message`, not `reply`
       //
       final assistantText = data['message'] as String;
-      final suggestions  = (data['suggestions'] as List<dynamic>?)
-          ?.cast<String>() ?? [];
       final insertBody   = data['insert_body'] != null
           ? Map<String, dynamic>.from(data['insert_body'])
           : null;
@@ -239,6 +234,39 @@ class _ScenarioChatPageState extends State<ScenarioChatPage> with TickerProvider
         text: assistantText,
         time: DateTime.now(),
       ));
+
+      if (insertBody != null) {
+        insertBody['user_id'] = auth.user!['user_id'];
+        final createResp = await http.post(
+          Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/create'),
+          headers: {
+            'Authorization': 'Bearer ${auth.token}',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode(insertBody),
+        );
+        if (createResp.statusCode == 200) {
+          final data = jsonDecode(createResp.body);
+          final newScenarioId = data['scenario']?['id'] ?? data['id'];
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Scenario created successfully!')),
+          );
+          // ▶ Navigate to the resume/edit page instead of popping home
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ResumeScenarioPage(
+                scenarioId: newScenarioId,
+                // chatId: _chatId,
+              ),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to save scenario.')),
+          );
+        }
+      }
 
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

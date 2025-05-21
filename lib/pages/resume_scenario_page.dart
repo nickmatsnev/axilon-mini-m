@@ -218,15 +218,16 @@ class _ResumeScenarioPageState extends State<ResumeScenarioPage>
 
     final auth = Provider.of<AuthProvider>(context, listen: false);
     final resp = await http.post(
-      Uri.parse(
-          'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/scenario-chat/message'),
+      Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/edit-scenario-chat'),
       headers: {
         'Authorization': 'Bearer ${auth.token}',
         'Content-Type': 'application/json',
       },
       body: jsonEncode({
-        'chat_id': _chatId,
-        'content': text.trim(),
+        'user_id': _userId,
+        'message_text': text.trim(),
+        'current_time': DateTime.now().toIso8601String(),
+        'scenario_id': widget.scenarioId,
       }),
     );
 
