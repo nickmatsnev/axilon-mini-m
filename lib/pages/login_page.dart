@@ -64,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       // Heading
                       const Text(
-                        'WELCOME TO AXILON',
+                        'Добро пожаловать в Axilon',
                         style: TextStyle(
                           fontFamily: 'DrukTextWideLCG', // or your DrukTextLCG
                           fontSize: 14,
@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                       IntlPhoneField(
                         controller: phoneController,
                         decoration: InputDecoration(
-                          labelText: 'Phone Number',
+                          labelText: 'Номер телефона',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -101,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
                         controller: passwordController,
                         obscureText: true,
                         decoration: InputDecoration(
-                          labelText: 'Password',
+                          labelText: 'Пароль',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -129,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
                               passwordController.text.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Please enter phone number and password.'),
+                                content: Text('Пожалуйста, сперва введите правильные телефонный номер и пароль.'),
                               ),
                             );
                             return;
@@ -161,14 +161,14 @@ class _LoginPageState extends State<LoginPage> {
                         },
                         child: isLoading
                             ? const CircularProgressIndicator(color: Colors.white)
-                            : const Text('LOGIN', style: TextStyle(fontSize: 16, fontFamily: 'DrukTextWideLCG')),
+                            : const Text('ВХОД', style: TextStyle(fontSize: 16, fontFamily: 'DrukTextWideLCG')),
                       ),
                       const SizedBox(height: 10),
 
                       // Register Button
                       TextButton(
                         onPressed: () => Navigator.pushReplacementNamed(context, '/register'),
-                        child: const Text("Don't have an account? Register"),
+                        child: const Text("Отсутствует учётная запись? Зарегистрируйся!"),
                       ),
                     ],
                   ),

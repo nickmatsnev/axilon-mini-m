@@ -1921,44 +1921,23 @@ class _SettingsPageState extends State<SettingsPage>
                         ),
                       ),
 
-                      // ASSISTANT SECTION
+                      // ASSISTANT SECTIO
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: _buildAssistantSection(),
                       ),
 
-                      // USSD Info
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child:
                         UssdInfoWidget(phoneNumber: user?['phone_number']),
                       ),
 
-
-                      // AGENT PROMPT
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: _buildAgentPromptSection(),
-                      ),
-
-                      // // AGENT PHONE PROMPT
-                      // Padding(
-                      //   padding: const EdgeInsets.all(16.0),
-                      //   child: _buildAgentPhonePromptSection(),
-                      // ),
-
-                      // // VOICE CLONING
-                      // Padding(
-                      //   padding: const EdgeInsets.all(16.0),
-                      //   child: _buildVoiceCloningSection(),
-                      // ),
-                      // PROFILE SECTION
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: _buildProfileSection(),
                       ),
 
-                      // ADMIN
                       if (isAdmin)
                         Padding(
                           padding: const EdgeInsets.all(16.0),
@@ -2293,79 +2272,6 @@ class _SettingsPageState extends State<SettingsPage>
                  ),
        ],
      ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAgentPromptSection() {
-    final translationProvider = Provider.of<TranslationProvider>(context);
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: const Color.fromRGBO(105, 125, 255, 0.2),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      padding: const EdgeInsets.all(16.0),
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Title row with edit icon
-          Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(Icons.edit, color: Colors.indigo),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  translationProvider.t("Edit Agent Prompt"),
-                  style: const TextStyle(
-                    fontFamily: 'DrukTextWideLCG',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: agentPromptController,
-            maxLines: 5,
-            decoration: InputDecoration(
-              labelText: translationProvider.t("Agent Prompt"),
-              border: const OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.indigo,
-              minimumSize: const Size(double.infinity, 50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            onPressed: _updateAgentPrompt,
-            child: Text(
-              translationProvider.t("Save Agent Prompt"),
-              style: const TextStyle(
-                color: Colors.white,
-                fontFamily: 'DrukTextWideLCG',
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
         ],
       ),
     );

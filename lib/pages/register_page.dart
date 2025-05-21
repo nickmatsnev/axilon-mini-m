@@ -66,7 +66,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     children: [
                       // Heading
                       const Text(
-                        'Register',
+                        'Регистрация',
                         style: TextStyle(
                           fontFamily: 'DrukTextWideLCG', // or DrukTextLCG
                           fontSize: 24,
@@ -80,7 +80,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       TextField(
                         controller: firstNameController,
                         decoration: InputDecoration(
-                          labelText: 'First Name',
+                          labelText: 'Имя',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -94,7 +94,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       TextField(
                         controller: lastNameController,
                         decoration: InputDecoration(
-                          labelText: 'Last Name',
+                          labelText: 'Фамилия',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -108,7 +108,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       IntlPhoneField(
                         controller: phoneController,
                         decoration: InputDecoration(
-                          labelText: 'Phone Number',
+                          labelText: 'Номер телефона',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -129,7 +129,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         controller: passwordController,
                         obscureText: true,
                         decoration: InputDecoration(
-                          labelText: 'Password',
+                          labelText: 'Пароль',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -178,14 +178,14 @@ class _RegisterPageState extends State<RegisterPage> {
                         },
                         child: isLoading
                             ? const CircularProgressIndicator(color: Colors.white)
-                            : const Text('REGISTER', style: TextStyle(fontSize: 16, fontFamily: 'DrukTextWideLCG')),
+                            : const Text('Зарегистрироваться', style: TextStyle(fontSize: 16, fontFamily: 'DrukTextWideLCG')),
                       ),
                       const SizedBox(height: 10),
 
                       // Already have an account
                       TextButton(
                         onPressed: () => Navigator.pushReplacementNamed(context, '/'),
-                        child: const Text('Already have an account? Log in'),
+                        child: const Text('Уже есть учётная запись? Войти'),
                       ),
                     ],
                   ),
