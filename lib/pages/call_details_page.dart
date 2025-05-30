@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
@@ -6,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import 'package:path_provider/path_provider.dart';
 import '../providers/translation_provider.dart';
 
 class CallDetailsPage extends StatefulWidget {
@@ -103,45 +105,73 @@ class _CallDetailsPageState extends State<CallDetailsPage> {
     return _contactsMap[normalized] ?? phone;
   }
 
+
   /// Called by a Play/Pause button to toggle call audio.
   Future<void> _playPauseAudio() async {
     final raw = widget.call['audio'] as String? ?? '';
-    final audioUrl = raw.startsWith('http')
-        ? raw
-        : 'https://axilon-mini-be-e5732e59dadc.herokuapp.com$raw';
-    if (audioUrl == null || audioUrl.isEmpty) {
+    if (raw.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('No audio for this call')),
       );
       return;
     }
 
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final token = authProvider.token ?? "";
+    // Normalize URL
+    final audioUrl = raw.startsWith('http')
+        ? raw
+        : raw.startsWith('/')
+        ? 'https://axilon-mini-be-e5732e59dadc.herokuapp.com$raw'
+        : 'https://axilon-mini-be-e5732e59dadc.herokuapp.com/$raw';
 
-    if (!_isPlaying) {
-      try {
-        await _audioPlayer.stop();
-        // 3) set AudioSource with headers
-        await _audioPlayer.setAudioSource(
-          AudioSource.uri(
-            Uri.parse(audioUrl),
-            headers: {
-              'Authorization': 'Bearer $token',
-              // add any other headers your server requires
-            },
-          ),
-        );
-        await _audioPlayer.play();
+    final token = Provider.of<AuthProvider>(context, listen: false).token;
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Not authenticated')),
+      );
+      return;
+    }
+
+    try {
+      if (!_isPlaying) {
         setState(() => _isPlaying = true);
-      } catch (e) {
-        debugPrint('Error playing audio: $e');
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Playback error: $e')));
+
+        // If it's an S3 URL, download without auth and play locally
+        if (audioUrl.contains('.amazonaws.com')) {
+          final resp = await http.get(Uri.parse(audioUrl));
+          if (resp.statusCode != 200) {
+            throw Exception('S3 download failed: HTTP ${resp.statusCode}');
+          }
+          final dir = await getTemporaryDirectory();
+          final file = File('${dir.path}/call_${widget.call['call_id']}.mp3');
+          await file.writeAsBytes(resp.bodyBytes, flush: true);
+          await _audioPlayer.setFilePath(file.path);
+
+        } else {
+          // Your own server: fetch with Bearer, then play locally
+          final resp = await http.get(
+            Uri.parse(audioUrl),
+            headers: { 'Authorization': 'Bearer $token' },
+          );
+          if (resp.statusCode != 200) {
+            throw Exception('Server download failed: HTTP ${resp.statusCode}');
+          }
+          final dir = await getTemporaryDirectory();
+          final file = File('${dir.path}/call_${widget.call['call_id']}.mp3');
+          await file.writeAsBytes(resp.bodyBytes, flush: true);
+          await _audioPlayer.setFilePath(file.path);
+        }
+
+        await _audioPlayer.play();
+      } else {
+        await _audioPlayer.stop();
       }
-    } else {
-      await _audioPlayer.stop();
-      setState(() => _isPlaying = false);
+    } catch (e) {
+      debugPrint('❌ Audio load/play failed: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Playback error: $e')),
+      );
+    } finally {
+      setState(() => _isPlaying = _audioPlayer.playing);
     }
   }
 

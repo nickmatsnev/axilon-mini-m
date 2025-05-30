@@ -200,34 +200,34 @@ class _ScenariosPageState extends State<ScenariosPage> {
                         onChanged: (_) => _toggleStatus(i),
                       ),
                       onTap: () async {
-                        final auth   = Provider.of<AuthProvider>(context, listen: false);
-                        final token  = auth.token!;
-                        final userId = auth.user!['user_id'];
+                        final auth = Provider.of<AuthProvider>(context, listen: false);
                         final resp = await http.post(
-                          Uri.parse(
-                              'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/scenario-chat/create'
-                          ),
+                          Uri.parse('https://…/api/scenarios/scenario-chat/create'),
                           headers: {
-                            'Authorization': 'Bearer $token',
-                            'Content-Type':  'application/json',
+                            'Authorization': 'Bearer ${auth.token}',
+                            'Content-Type': 'application/json',
                           },
                           body: jsonEncode({
-                            'user_id':     userId,
+                            'user_id': auth.user!['user_id'],
                             'scenario_id': scn['id'],
                           }),
                         );
                         if (resp.statusCode == 200) {
                           final data   = jsonDecode(resp.body);
                           final chatId = data['chat']['chat_id'].toString();
-                          Navigator.push(
+
+                          // await the detail page, get `deleted` flag:
+                          final deleted = await Navigator.push<bool>(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => ResumeScenarioPage(
-                                scenarioId: scn['id'],
-                                // chatId:      chatId,
-                              ),
+                              builder: (_) => ResumeScenarioPage(scenarioId: scn['id']),
                             ),
                           );
+
+                          // if they deleted it, or simply always refreshed on pop:
+                          if (deleted == true) {
+                            _fetchScenarios();
+                          }
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('Failed to load scenario chat.')),

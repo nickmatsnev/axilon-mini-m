@@ -255,16 +255,14 @@ class _ResumeScenarioPageState extends State<ResumeScenarioPage>
   Future<void> _deleteScenario() async {
     final auth = Provider.of<AuthProvider>(context, listen: false);
     final resp = await http.delete(
-      Uri.parse(
-          'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/delete/${widget.scenarioId}'),
-      headers: {
-        'Authorization': 'Bearer ${auth.token}',
-      },
+      Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/delete/${widget.scenarioId}'),
+      headers: { 'Authorization': 'Bearer ${auth.token}' },
     );
     if (resp.statusCode == 200) {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Scenario deleted')));
-      Navigator.of(context).pop(); // back to list
+      // tell the previous page to refresh its list:
+      Navigator.of(context).pop(true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Delete failed (${resp.statusCode})')),
