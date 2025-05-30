@@ -236,38 +236,12 @@ class _ScenarioChatPageState extends State<ScenarioChatPage> with TickerProvider
       ));
 
       if (insertBody != null) {
-        insertBody['user_id'] = auth.user!['user_id'];
-        final createResp = await http.post(
-          Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/create'),
-          headers: {
-            'Authorization': 'Bearer ${auth.token}',
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode(insertBody),
-        );
-        if (createResp.statusCode == 200) {
-          final data = jsonDecode(createResp.body);
-          final newScenarioId = data['scenario']?['id'] ?? data['id'];
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Scenario created successfully!')),
-          );
-          // ▶ Navigate to the resume/edit page instead of popping home
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => ResumeScenarioPage(
-                scenarioId: newScenarioId,
-                // chatId: _chatId,
-              ),
-            ),
-          );
+          Navigator.pushReplacementNamed(context, '/main');
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to save scenario.')),
           );
         }
-      }
-
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error ${resp.statusCode} sending message')),
