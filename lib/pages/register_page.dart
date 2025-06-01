@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/countries.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
@@ -37,6 +38,40 @@ class _RegisterPageState extends State<RegisterPage> {
     }).toList();
   }
 
+  Future<void> _onRegisterPressed() async {
+    setState(() => isLoading = true);
+
+    try {
+      // 1) Get the device's FCM token
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken == null) {
+        throw Exception('Unable to fetch FCM token');
+      }
+
+      // 2) Format phone number and country code as needed
+      final formattedPhone = "${selectedDialCode ?? ''}${phoneController.text}";
+      final countryIso     = selectedCountryIso ?? 'US';
+
+      // 3) Call your AuthProvider.register(...) with the new fcmToken
+      await Provider.of<AuthProvider>(context, listen: false).register(
+        firstNameController.text.trim(),
+        lastNameController.text.trim(),
+        formattedPhone,
+        passwordController.text.trim(),
+        countryIso,
+        fcmToken, // <— pass it here
+      );
+
+      // 4) Navigate onward on success
+      Navigator.pushReplacementNamed(context, '/ussd');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Registration failed: ${e.toString()}')),
+      );
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -151,31 +186,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         onPressed: isLoading
                             ? null
-                            : () async {
-                          setState(() => isLoading = true);
-                          try {
-                            final formattedPhone =
-                                "${selectedDialCode ?? ''}${phoneController.text}";
-                            final countryIso = selectedCountryIso ?? 'Unknown';
-
-                            await Provider.of<AuthProvider>(context, listen: false)
-                                .register(
-                              firstNameController.text,
-                              lastNameController.text,
-                              formattedPhone,
-                              passwordController.text,
-                              countryIso,
-                            );
-
-                            Navigator.pushReplacementNamed(context, '/ussd');
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(e.toString())),
-                            );
-                          } finally {
-                            setState(() => isLoading = false);
-                          }
-                        },
+                            : _onRegisterPressed,
                         child: isLoading
                             ? const CircularProgressIndicator(color: Colors.white)
                             : const Text('Зарегистрироваться', style: TextStyle(fontSize: 16, fontFamily: 'DrukTextWideLCG')),

@@ -28,7 +28,7 @@ Future<Map<String, dynamic>> fetchChat(String token) async {
       return false; // Assume token is invalid on error
     }
   }
-  Future<Map<String, dynamic>> register(String firstName, String lastName, String phone, String password, String countryIso) async {
+  Future<Map<String, dynamic>> register(String firstName, String lastName, String phone, String password, String countryIso, String fcmToken) async {
     final response = await http.post(
       Uri.parse('$baseUrl/auth/register'),
       headers: {'Content-Type': 'application/json'},
@@ -37,7 +37,8 @@ Future<Map<String, dynamic>> fetchChat(String token) async {
         "last_name": lastName,
         "phone_number": phone,
         "password": password,
-        "country": countryIso
+        "country": countryIso,
+        "fcm_token": fcmToken
       }),
     );
 

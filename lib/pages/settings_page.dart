@@ -1393,7 +1393,7 @@ class _SettingsPageState extends State<SettingsPage>
     }
   }
   Future<void> _fetchScenariosStats(String token, String range) async {
-    final url = Uri.parse('https://…/api/stats/scenarios?range=$range');
+    final url = Uri.parse('https://https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/stats/scenarios?range=$range');
     final resp = await http.get(url, headers: {'Authorization':'Bearer $token'});
     if (resp.statusCode == 200) {
       final data = jsonDecode(resp.body) as List;

@@ -116,51 +116,24 @@ class _CallDetailsPageState extends State<CallDetailsPage> {
       return;
     }
 
-    // Normalize URL
-    final audioUrl = raw.startsWith('http')
-        ? raw
-        : raw.startsWith('/')
-        ? 'https://axilon-mini-be-e5732e59dadc.herokuapp.com$raw'
-        : 'https://axilon-mini-be-e5732e59dadc.herokuapp.com/$raw';
-
-    final token = Provider.of<AuthProvider>(context, listen: false).token;
-    if (token == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Not authenticated')),
-      );
-      return;
-    }
+    // audioUrl is already a fully‐qualified “https://…amazonaws.com/audio/…” link
+    final audioUrl = raw;
 
     try {
       if (!_isPlaying) {
         setState(() => _isPlaying = true);
 
-        // If it's an S3 URL, download without auth and play locally
-        if (audioUrl.contains('.amazonaws.com')) {
-          final resp = await http.get(Uri.parse(audioUrl));
-          if (resp.statusCode != 200) {
-            throw Exception('S3 download failed: HTTP ${resp.statusCode}');
-          }
-          final dir = await getTemporaryDirectory();
-          final file = File('${dir.path}/call_${widget.call['call_id']}.mp3');
-          await file.writeAsBytes(resp.bodyBytes, flush: true);
-          await _audioPlayer.setFilePath(file.path);
-
-        } else {
-          // Your own server: fetch with Bearer, then play locally
-          final resp = await http.get(
-            Uri.parse(audioUrl),
-            headers: { 'Authorization': 'Bearer $token' },
-          );
-          if (resp.statusCode != 200) {
-            throw Exception('Server download failed: HTTP ${resp.statusCode}');
-          }
-          final dir = await getTemporaryDirectory();
-          final file = File('${dir.path}/call_${widget.call['call_id']}.mp3');
-          await file.writeAsBytes(resp.bodyBytes, flush: true);
-          await _audioPlayer.setFilePath(file.path);
+        // Download without any Authorization header:
+        final resp = await http.get(Uri.parse(audioUrl));
+        if (resp.statusCode != 200) {
+          throw Exception('S3 download failed: HTTP ${resp.statusCode}');
         }
 
+        final dir = await getTemporaryDirectory();
+        final file = File('${dir.path}/call_${widget.call['call_id']}.mp3');
+        await file.writeAsBytes(resp.bodyBytes, flush: true);
+
+        await _audioPlayer.setFilePath(file.path);
         await _audioPlayer.play();
       } else {
         await _audioPlayer.stop();

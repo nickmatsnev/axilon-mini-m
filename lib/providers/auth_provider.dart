@@ -105,12 +105,12 @@ class AuthProvider with ChangeNotifier {
   }
 
   // Register method
-  Future<void> register(String firstName, String lastName, String phone, String password, String countryIso) async {
+  Future<void> register(String firstName, String lastName, String phone, String password, String countryIso, String fcmToken) async {
     try {
       // Remove "+" from phone number
       final formattedPhone = phone.replaceAll('+', '');
 
-      final response = await _authService.register(firstName, lastName, formattedPhone, password, countryIso);
+      final response = await _authService.register(firstName, lastName, formattedPhone, password, countryIso, fcmToken);
 
       // Parse the response to extract token and user
       final token = response['token'];

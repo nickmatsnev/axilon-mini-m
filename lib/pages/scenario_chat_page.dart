@@ -238,9 +238,7 @@ class _ScenarioChatPageState extends State<ScenarioChatPage> with TickerProvider
       if (insertBody != null) {
           Navigator.pushReplacementNamed(context, '/main');
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to save scenario.')),
-          );
+        Navigator.pushReplacementNamed(context, '/main');
         }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

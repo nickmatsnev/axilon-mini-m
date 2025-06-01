@@ -202,7 +202,7 @@ class _ScenariosPageState extends State<ScenariosPage> {
                       onTap: () async {
                         final auth = Provider.of<AuthProvider>(context, listen: false);
                         final resp = await http.post(
-                          Uri.parse('https://…/api/scenarios/scenario-chat/create'),
+                          Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/scenarios/scenario-chat/create'),
                           headers: {
                             'Authorization': 'Bearer ${auth.token}',
                             'Content-Type': 'application/json',
