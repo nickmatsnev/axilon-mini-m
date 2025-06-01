@@ -1,67 +1,72 @@
 import 'package:flutter/material.dart';
 import 'package:phone_state/phone_state.dart';
 import 'package:provider/provider.dart';
-import '../providers/call_logging_provider.dart';
 import '../providers/auth_provider.dart';
+import '../providers/call_logging_provider.dart';
+import '../utils/phone_call_helper.dart';
 
 class CallListener {
-  static DateTime? _lastCallStartTime; // Track last call start time
-  static String? _lastCallerPhone; // Track last caller phone
-  static String? _lastRecipientPhone; // Track last recipient phone
-  static bool _callLogged = false; // Ensure each call is logged once
+  static DateTime? _lastCallStartTime;
+  static String? _lastCallerPhone;
+  static String? _lastRecipientPhone;
+  static bool _callLogged = false;
 
   static void startListening(BuildContext context) {
     PhoneState.stream.listen((PhoneState event) async {
-      // Access the user's phone number from AuthProvider
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final String? recipientPhone = authProvider.user?['phone_number'];
+      final rejectAll = authProvider.user?['reject_all'] as bool? ?? false;
 
-      if (recipientPhone == null) {
-        print("Recipient phone number is not available.");
-        return;
+      // The user’s own phone number (recipient) from AuthProvider
+      final String? rawSelfNumber = authProvider.user?['phone_number'];
+      if (rawSelfNumber == null) return;
+      final recipientPhone = rawSelfNumber.replaceAll('+', '');
+
+      final callerPhone = event.number?.replaceAll('+', '') ?? 'Unknown';
+
+      // If user chose to reject all, hang up immediately on incoming
+      if (event.status == PhoneStateStatus.CALL_INCOMING && rejectAll) {
+        print('Reject‐All is ON: hanging up call from $callerPhone');
+        await PhoneCallHelper.endCurrentCall();
+        // Optionally, log that we “rejected” the call:
+        final callLoggingProvider =
+        Provider.of<CallLoggingProvider>(context, listen: false);
+        await callLoggingProvider.logCall(
+          callerPhone: callerPhone,
+          recipientPhone: recipientPhone,
+          status: 'rejected',
+          startTime: DateTime.now(),
+          duration: Duration.zero,
+        );
+        return; // do not proceed further
       }
 
-      // Sanitize phone numbers by removing "+"
-      final String callerPhone = event.number?.replaceAll('+', '') ?? 'Unknown';
-      final String sanitizedRecipientPhone = recipientPhone.replaceAll('+', '');
-
-      // Skip if the caller phone is "Unknown"
-      if (callerPhone == 'Unknown') {
-        print("Skipping call log as callerPhone is Unknown");
-        return;
-      }
-
-      // Initialize logging provider
-      final callLoggingProvider =
-      Provider.of<CallLoggingProvider>(context, listen: false);
-
+      // Otherwise, proceed with your existing logging logic:
       if (event.status == PhoneStateStatus.CALL_INCOMING) {
-        print("CALL_INCOMING callerPhone: $callerPhone");
-
+        print('CALL_INCOMING: $callerPhone');
         if (!_callLogged) {
           _lastCallStartTime = DateTime.now();
           _lastCallerPhone = callerPhone;
-          _lastRecipientPhone = sanitizedRecipientPhone;
+          _lastRecipientPhone = recipientPhone;
           _callLogged = true;
 
-          // Log incoming call
+          final callLoggingProvider =
+          Provider.of<CallLoggingProvider>(context, listen: false);
           await callLoggingProvider.logCall(
             callerPhone: callerPhone,
-            recipientPhone: sanitizedRecipientPhone,
+            recipientPhone: recipientPhone,
             status: 'incoming',
             startTime: _lastCallStartTime!,
             duration: Duration.zero,
           );
         }
       } else if (event.status == PhoneStateStatus.CALL_ENDED) {
-        print("CALL_ENDED callerPhone: $callerPhone");
-
+        print('CALL_ENDED: $callerPhone');
         if (_callLogged) {
           final callDuration = _lastCallStartTime != null
               ? DateTime.now().difference(_lastCallStartTime!)
               : Duration.zero;
-
-          // Log ended call
+          final callLoggingProvider =
+          Provider.of<CallLoggingProvider>(context, listen: false);
           await callLoggingProvider.logCall(
             callerPhone: _lastCallerPhone!,
             recipientPhone: _lastRecipientPhone!,
@@ -70,7 +75,6 @@ class CallListener {
             duration: callDuration,
           );
 
-          // Reset call log tracking
           _callLogged = false;
         }
       }
