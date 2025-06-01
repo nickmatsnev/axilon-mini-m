@@ -44,6 +44,7 @@ class _RegisterPageState extends State<RegisterPage> {
     try {
       // 1) Get the device's FCM token
       final fcmToken = await FirebaseMessaging.instance.getToken();
+      print("fcm token is ${fcmToken}");
       if (fcmToken == null) {
         throw Exception('Unable to fetch FCM token');
       }
