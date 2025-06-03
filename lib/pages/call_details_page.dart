@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
-import 'package:path_provider/path_provider.dart';
 import '../providers/translation_provider.dart';
 
 class CallDetailsPage extends StatefulWidget {
@@ -105,7 +105,6 @@ class _CallDetailsPageState extends State<CallDetailsPage> {
     return _contactsMap[normalized] ?? phone;
   }
 
-
   /// Called by a Play/Pause button to toggle call audio.
   Future<void> _playPauseAudio() async {
     final raw = widget.call['audio'] as String? ?? '';
@@ -116,37 +115,64 @@ class _CallDetailsPageState extends State<CallDetailsPage> {
       return;
     }
 
-    // audioUrl is already a fully‐qualified “https://…amazonaws.com/audio/…” link
-    final audioUrl = raw;
+    // Нормализуем URL:
+    final audioUrl = raw.startsWith('http')
+        ? raw
+        : 'https://axilon-mini-be-e5732e59dadc.herokuapp.com$raw';
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final token = authProvider.token ?? "";
 
     try {
       if (!_isPlaying) {
-        setState(() => _isPlaying = true);
+        // Если уже что-то играли, останавливаем:
+        await _audioPlayer.stop();
 
-        // Download without any Authorization header:
-        final resp = await http.get(Uri.parse(audioUrl));
-        if (resp.statusCode != 200) {
-          throw Exception('S3 download failed: HTTP ${resp.statusCode}');
+        // 1) Скачиваем MP3 как байты, используя правильные заголовки:
+        http.Response resp;
+        if (audioUrl.contains('amazonaws.com')) {
+          // Presigned-S3 URL — никаких дополнительных заголовков не нужно:
+          resp = await http.get(Uri.parse(audioUrl));
+        } else {
+          // Наш собственный сервер — передаём Bearer:
+          resp = await http.get(
+            Uri.parse(audioUrl),
+            headers: { 'Authorization': 'Bearer $token' },
+          );
         }
 
+        if (resp.statusCode != 200) {
+          throw Exception(
+              'Download failed: HTTP ${resp.statusCode} (${resp.reasonPhrase})');
+        }
+
+        // 2) Записываем MP3 во временный файл
         final dir = await getTemporaryDirectory();
         final file = File('${dir.path}/call_${widget.call['call_id']}.mp3');
         await file.writeAsBytes(resp.bodyBytes, flush: true);
 
+        // 3) Устанавливаем AudioPlayer на локальный путь
         await _audioPlayer.setFilePath(file.path);
+
+        // 4) Запускаем воспроизведение
         await _audioPlayer.play();
+        setState(() => _isPlaying = true);
       } else {
+        // Если сейчас играет, просто останавливаем:
         await _audioPlayer.stop();
+        setState(() => _isPlaying = false);
       }
     } catch (e) {
-      debugPrint('❌ Audio load/play failed: $e');
+      debugPrint('Error playing audio: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Playback error: $e')),
       );
-    } finally {
-      setState(() => _isPlaying = _audioPlayer.playing);
+      // На всякий случай, если плеер «завис», останавливаем его:
+      await _audioPlayer.stop();
+      setState(() => _isPlaying = false);
     }
   }
+
 
   List<Map<String, String>> parseTranscript(String? rawTranscript) {
     if (rawTranscript == null || rawTranscript.trim().isEmpty) {
