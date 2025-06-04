@@ -73,17 +73,16 @@ Future<void> initFCM(BuildContext context) async {
       try {
         final bearerToken = authProvider.token;
         final response = await http.post(
-          Uri.parse(
-              'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/set-fcm-token'),
+          Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/set-fcm-token'),
           headers: {
             'Authorization': 'Bearer $bearerToken',
             'Content-Type': 'application/json',
           },
           body: jsonEncode({
             'fcm_token': fcmToken,
-            'userId': authProvider.user?['user_id'],
           }),
         );
+
         if (authProvider.user?['user_id'] != null) {
           NotificationService().initialize(authProvider.user!['user_id']);
         }
@@ -107,15 +106,13 @@ Future<void> initFCM(BuildContext context) async {
       try {
         final bearerToken = authProvider.token;
         await http.post(
-          Uri.parse(
-              'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/set-fcm-token'),
+          Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/set-fcm-token'),
           headers: {
             'Authorization': 'Bearer $bearerToken',
             'Content-Type': 'application/json',
           },
           body: jsonEncode({
             'fcm_token': newToken,
-            'userId': authProvider.user?['user_id'],
           }),
         );
       } catch (e) {
