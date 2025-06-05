@@ -63,6 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '468360738183',
     projectId: 'axilon-m',
     storageBucket: 'axilon-m.firebasestorage.app',
-    iosBundleId: 'ai.axilon.mini',
+    iosBundleId: 'com.example.axilonm',
   );
 }

@@ -106,73 +106,81 @@ class _CallDetailsPageState extends State<CallDetailsPage> {
   }
 
   /// Called by a Play/Pause button to toggle call audio.
+
   Future<void> _playPauseAudio() async {
-    final raw = widget.call['audio'] as String? ?? '';
-    if (raw.isEmpty) {
+    final callId = widget.call['call_id']?.toString() ?? '';
+    if (callId.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No audio for this call')),
+        const SnackBar(content: Text('No call ID available')),
       );
       return;
     }
 
-    // Нормализуем URL:
-    final audioUrl = raw.startsWith('http')
-        ? raw
-        : 'https://axilon-mini-be-e5732e59dadc.herokuapp.com$raw';
+    // If already playing this call, stop the player:
+    if (_isPlaying) {
+      await _audioPlayer.stop();
+      setState(() => _isPlaying = false);
+      return;
+    }
+
+    // Otherwise, stop any other playback and fetch a fresh presigned URL
+    await _audioPlayer.stop();
+    setState(() => _isPlaying = false);
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final token = authProvider.token ?? "";
+    final token = authProvider.token ?? '';
 
     try {
-      if (!_isPlaying) {
-        // Если уже что-то играли, останавливаем:
-        await _audioPlayer.stop();
-
-        // 1) Скачиваем MP3 как байты, используя правильные заголовки:
-        http.Response resp;
-        if (audioUrl.contains('amazonaws.com')) {
-          // Presigned-S3 URL — никаких дополнительных заголовков не нужно:
-          resp = await http.get(Uri.parse(audioUrl));
-        } else {
-          // Наш собственный сервер — передаём Bearer:
-          resp = await http.get(
-            Uri.parse(audioUrl),
-            headers: { 'Authorization': 'Bearer $token' },
-          );
-        }
-
-        if (resp.statusCode != 200) {
-          throw Exception(
-              'Download failed: HTTP ${resp.statusCode} (${resp.reasonPhrase})');
-        }
-
-        // 2) Записываем MP3 во временный файл
-        final dir = await getTemporaryDirectory();
-        final file = File('${dir.path}/call_${widget.call['call_id']}.mp3');
-        await file.writeAsBytes(resp.bodyBytes, flush: true);
-
-        // 3) Устанавливаем AudioPlayer на локальный путь
-        await _audioPlayer.setFilePath(file.path);
-
-        // 4) Запускаем воспроизведение
-        await _audioPlayer.play();
-        setState(() => _isPlaying = true);
-      } else {
-        // Если сейчас играет, просто останавливаем:
-        await _audioPlayer.stop();
-        setState(() => _isPlaying = false);
+      // 1) Ask our backend for a fresh presigned URL:
+      final presignUrl = Uri.parse(
+          'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/phone-calls/$callId/audio-url'
+      );
+      final presignResp = await http.get(
+        presignUrl,
+        headers: { 'Authorization': 'Bearer $token' },
+      );
+      if (presignResp.statusCode != 200) {
+        throw Exception(
+            'Could not get audio URL: HTTP ${presignResp.statusCode}'
+        );
       }
+      final presignBody = jsonDecode(presignResp.body) as Map<String, dynamic>;
+      final freshSignedUrl = presignBody['audioUrl'] as String? ?? '';
+      if (freshSignedUrl.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No audio available for this call')),
+        );
+        return;
+      }
+
+      // 2) Download the MP3 bytes from that presigned URL:
+      final downloadResp = await http.get(Uri.parse(freshSignedUrl));
+      if (downloadResp.statusCode != 200) {
+        throw Exception(
+            'Download failed: HTTP ${downloadResp.statusCode}'
+        );
+      }
+
+      // 3) Write the MP3 to a temporary file:
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/call_${callId}.mp3');
+      await file.writeAsBytes(downloadResp.bodyBytes, flush: true);
+
+      // 4) Tell AudioPlayer to play from the local path:
+      await _audioPlayer.setFilePath(file.path);
+      await _audioPlayer.play();
+      setState(() => _isPlaying = true);
+
     } catch (e) {
       debugPrint('Error playing audio: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Playback error: $e')),
       );
-      // На всякий случай, если плеер «завис», останавливаем его:
+      // In case the player got stuck, ensure it’s stopped:
       await _audioPlayer.stop();
       setState(() => _isPlaying = false);
     }
   }
-
 
   List<Map<String, String>> parseTranscript(String? rawTranscript) {
     if (rawTranscript == null || rawTranscript.trim().isEmpty) {

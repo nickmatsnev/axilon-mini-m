@@ -255,69 +255,60 @@ class _CallLogsPageState extends State<CallLogsPage> {
 
   /// Replaced playback logic: download MP3 to temp file → play via local path
   Future<void> _handlePlayPause(dynamic call) async {
-    final callId =
-        call['call_id']?.toString() ?? call['id']?.toString() ?? '';
+    final callId = call['call_id']?.toString() ?? '';
+    // Is it already playing? Pause if so:
     final isPlaying = _playingStatus[callId] ?? false;
-
-    // If this call is currently playing, pause it:
     if (isPlaying) {
       await _audioPlayer.stop();
       setState(() => _playingStatus[callId] = false);
       return;
     }
 
-    // Otherwise, stop any other currently playing call:
-    _playingStatus.keys.forEach((k) {
-      _playingStatus[k] = false;
-    });
+    // Otherwise, stop any other playing audio:
+    _playingStatus.keys.forEach((k) => _playingStatus[k] = false);
     await _audioPlayer.stop();
 
-    // 1) Get the raw 'audio' field (presigned or server URL):
-    final raw = (call['audio'] as String?) ?? '';
-    if (raw.isEmpty) {
+    // 1) Fetch a fresh presigned URL from your backend
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final token = authProvider.token ?? "";
+    final url = Uri.parse(
+        'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/phone-calls/$callId/audio-url'
+    );
+    final resp = await http.get(
+        url,
+        headers: { 'Authorization': 'Bearer $token' }
+    );
+    if (resp.statusCode != 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No audio for this call')),
+          SnackBar(content: Text('Could not get audio URL: ${resp.statusCode}'))
+      );
+      return;
+    }
+    final body = jsonDecode(resp.body);
+    final freshSignedUrl = body['audioUrl'] as String;
+    if (freshSignedUrl.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No audio for this call'))
       );
       return;
     }
 
-    // 2) Normalize into a full URL:
-    final audioUrl = raw.startsWith('http')
-        ? raw
-        : 'https://axilon-mini-be-e5732e59dadc.herokuapp.com$raw';
-
-    final authProvider =
-    Provider.of<AuthProvider>(context, listen: false);
-    final token = authProvider.token ?? "";
-
     try {
-      http.Response resp;
-
-      // 3) If it's an S3 (presigned) URL → no extra headers. Otherwise attach Bearer:
-      if (audioUrl.contains('amazonaws.com')) {
-        resp = await http.get(Uri.parse(audioUrl));
-      } else {
-        resp = await http.get(
-          Uri.parse(audioUrl),
-          headers: {'Authorization': 'Bearer $token'},
+      // 2) Download the MP3 bytes from the presigned URL
+      final downloadResp = await http.get(Uri.parse(freshSignedUrl));
+      if (downloadResp.statusCode != 200) {
+        throw Exception(
+            'Download failed: HTTP ${downloadResp.statusCode}'
         );
       }
 
-      if (resp.statusCode != 200) {
-        throw Exception(
-            'Download failed: HTTP ${resp.statusCode} (${resp.reasonPhrase})');
-      }
-
-      // 4) Write the MP3 bytes into a temporary file:
+      // 3) Write to a temporary file
       final dir = await getTemporaryDirectory();
-      final file =
-      File('${dir.path}/call_${callId}.mp3');
-      await file.writeAsBytes(resp.bodyBytes, flush: true);
+      final file = File('${dir.path}/call_${callId}.mp3');
+      await file.writeAsBytes(downloadResp.bodyBytes, flush: true);
 
-      // 5) Tell audioplayers to play from the local file path:
+      // 4) Play from local file
       await _audioPlayer.play(DeviceFileSource(file.path));
-
-      // 6) Mark this call as playing:
       setState(() {
         _playingStatus[callId] = true;
         _lastPlayedCallId = callId;
@@ -325,9 +316,8 @@ class _CallLogsPageState extends State<CallLogsPage> {
     } catch (e) {
       debugPrint('Error playing audio: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Playback error: $e')),
+          SnackBar(content: Text('Playback error: $e'))
       );
-      // If something goes wrong, ensure the player is stopped:
       await _audioPlayer.stop();
       setState(() => _playingStatus[callId] = false);
     }
