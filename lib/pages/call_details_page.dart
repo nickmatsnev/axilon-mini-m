@@ -76,13 +76,13 @@ class _CallDetailsPageState extends State<CallDetailsPage> {
         headers: {'Authorization': 'Bearer ${authProvider.token}'},
       );
     } catch (_) {
-      // Handle error if needed
+      // ignore
     } finally {
       setState(() => _isMarkingRead = false);
     }
   }
 
-  /// Load contacts from phone and map normalized number to display name.
+  /// Load contacts from phone and map normalized number → display name.
   Future<void> _loadContacts() async {
     if (await FlutterContacts.requestPermission()) {
       final contacts = await FlutterContacts.getContacts(withProperties: true);
@@ -105,8 +105,7 @@ class _CallDetailsPageState extends State<CallDetailsPage> {
     return _contactsMap[normalized] ?? phone;
   }
 
-  /// Called by a Play/Pause button to toggle call audio.
-
+  /// Called by the Play/Pause button to toggle call audio.
   Future<void> _playPauseAudio() async {
     final callId = widget.call['call_id']?.toString() ?? '';
     if (callId.isEmpty) {
@@ -116,14 +115,14 @@ class _CallDetailsPageState extends State<CallDetailsPage> {
       return;
     }
 
-    // If already playing this call, stop the player:
+    // If currently playing, stop and return:
     if (_isPlaying) {
       await _audioPlayer.stop();
       setState(() => _isPlaying = false);
       return;
     }
 
-    // Otherwise, stop any other playback and fetch a fresh presigned URL
+    // Otherwise, stop any existing player, and fetch fresh URL:
     await _audioPlayer.stop();
     setState(() => _isPlaying = false);
 
@@ -131,7 +130,7 @@ class _CallDetailsPageState extends State<CallDetailsPage> {
     final token = authProvider.token ?? '';
 
     try {
-      // 1) Ask our backend for a fresh presigned URL:
+      // 1) Ask backend for fresh presigned URL:
       final presignUrl = Uri.parse(
           'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/phone-calls/$callId/audio-url'
       );
@@ -153,7 +152,7 @@ class _CallDetailsPageState extends State<CallDetailsPage> {
         return;
       }
 
-      // 2) Download the MP3 bytes from that presigned URL:
+      // 2) Download MP3 bytes from that presigned URL:
       final downloadResp = await http.get(Uri.parse(freshSignedUrl));
       if (downloadResp.statusCode != 200) {
         throw Exception(
@@ -161,7 +160,7 @@ class _CallDetailsPageState extends State<CallDetailsPage> {
         );
       }
 
-      // 3) Write the MP3 to a temporary file:
+      // 3) Write MP3 to a temporary file:
       final dir = await getTemporaryDirectory();
       final file = File('${dir.path}/call_${callId}.mp3');
       await file.writeAsBytes(downloadResp.bodyBytes, flush: true);
@@ -176,7 +175,7 @@ class _CallDetailsPageState extends State<CallDetailsPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Playback error: $e')),
       );
-      // In case the player got stuck, ensure it’s stopped:
+      // Ensure the player is stopped if something went wrong:
       await _audioPlayer.stop();
       setState(() => _isPlaying = false);
     }
@@ -380,7 +379,7 @@ class _CallDetailsPageState extends State<CallDetailsPage> {
                       if (call['summary'] != null && call['summary'].toString().trim().isNotEmpty) ...[
                         const SizedBox(height: 20),
                         Text(
-                          translationProvider.t('SUMMARY')+ ':',
+                          translationProvider.t('SUMMARY') + ':',
                           style: const TextStyle(
                             fontFamily: 'DrukTextWideLCG',
                             fontSize: 16,
@@ -395,8 +394,8 @@ class _CallDetailsPageState extends State<CallDetailsPage> {
                         ),
                       ],
                       const SizedBox(height: 16),
-                      // AUDIO PLAYBACK
-                      if (call['audio'] != null && call['audio'].isNotEmpty)
+                      // AUDIO PLAYBACK: always show button if call_id exists
+                      if (call['call_id'] != null)
                         Row(
                           children: [
                             Text(
@@ -408,7 +407,9 @@ class _CallDetailsPageState extends State<CallDetailsPage> {
                             ),
                             const SizedBox(width: 8),
                             IconButton(
-                              icon: Icon(_isPlaying ? Icons.stop : Icons.play_arrow),
+                              icon: Icon(
+                                  _isPlaying ? Icons.stop : Icons.play_arrow
+                              ),
                               color: Colors.indigo,
                               onPressed: _playPauseAudio,
                             ),

@@ -108,9 +108,7 @@ class _CallLogsPageState extends State<CallLogsPage> {
       Provider.of<TranslationProvider>(context, listen: false);
       final token = authProvider.token ?? "";
       final user = authProvider.user;
-      if (!_hasFetchedLanguage &&
-          token.isNotEmpty &&
-          user != null) {
+      if (!_hasFetchedLanguage && token.isNotEmpty && user != null) {
         translationProvider
             .fetchUserLanguage(token, user['user_id'])
             .catchError((_) {});
@@ -118,8 +116,7 @@ class _CallLogsPageState extends State<CallLogsPage> {
       }
     });
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final auth =
-      Provider.of<AuthProvider>(context, listen: false);
+      final auth = Provider.of<AuthProvider>(context, listen: false);
       await auth.fetchUserAndUpdateLang(context);
       await _fetchCallLogs();
       await _loadContacts();
@@ -157,8 +154,7 @@ class _CallLogsPageState extends State<CallLogsPage> {
   }
 
   Future<void> _fetchCallLogs() async {
-    final auth =
-    Provider.of<AuthProvider>(context, listen: false);
+    final auth = Provider.of<AuthProvider>(context, listen: false);
     final userId = auth.user?['user_id'];
     if (userId == null || auth.token == null) {
       setState(() => _isLoading = false);
@@ -201,8 +197,7 @@ class _CallLogsPageState extends State<CallLogsPage> {
 
   Map<String, List<dynamic>> _groupCallsByTime(
       List<dynamic> calls) {
-    final t = Provider.of<TranslationProvider>(context,
-        listen: true);
+    final t = Provider.of<TranslationProvider>(context, listen: true);
     final now = DateTime.now();
     final groups = {
       t.t("Today"): <dynamic>[],
@@ -214,8 +209,7 @@ class _CallLogsPageState extends State<CallLogsPage> {
     };
     for (var call in calls) {
       final s = call['start_time'];
-      final dt =
-      s != null ? DateTime.tryParse(s) : null;
+      final dt = s != null ? DateTime.tryParse(s) : null;
       if (dt == null) {
         groups[t.t("Older")]!.add(call);
         continue;
@@ -242,8 +236,7 @@ class _CallLogsPageState extends State<CallLogsPage> {
   }
 
   String _formatDuration(dynamic d) {
-    final t = Provider.of<TranslationProvider>(context,
-        listen: true);
+    final t = Provider.of<TranslationProvider>(context, listen: true);
     if (d == null) return 'N/A';
     final sec = d['seconds'] ?? 0;
     final min = d['minutes'] ?? 0;
@@ -253,10 +246,17 @@ class _CallLogsPageState extends State<CallLogsPage> {
     return '${sec}${t.t("s")}';
   }
 
-  /// Replaced playback logic: download MP3 to temp file → play via local path
+  /// Playback logic: request fresh presigned URL → download → play local file
   Future<void> _handlePlayPause(dynamic call) async {
     final callId = call['call_id']?.toString() ?? '';
-    // Is it already playing? Pause if so:
+    if (callId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No call ID available')),
+      );
+      return;
+    }
+
+    // If already playing this call, stop:
     final isPlaying = _playingStatus[callId] ?? false;
     if (isPlaying) {
       await _audioPlayer.stop();
@@ -264,11 +264,10 @@ class _CallLogsPageState extends State<CallLogsPage> {
       return;
     }
 
-    // Otherwise, stop any other playing audio:
+    // Otherwise, stop any other playback and fetch fresh URL:
     _playingStatus.keys.forEach((k) => _playingStatus[k] = false);
     await _audioPlayer.stop();
 
-    // 1) Fetch a fresh presigned URL from your backend
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final token = authProvider.token ?? "";
     final url = Uri.parse(
@@ -294,7 +293,7 @@ class _CallLogsPageState extends State<CallLogsPage> {
     }
 
     try {
-      // 2) Download the MP3 bytes from the presigned URL
+      // 1) Download the MP3 bytes:
       final downloadResp = await http.get(Uri.parse(freshSignedUrl));
       if (downloadResp.statusCode != 200) {
         throw Exception(
@@ -302,12 +301,12 @@ class _CallLogsPageState extends State<CallLogsPage> {
         );
       }
 
-      // 3) Write to a temporary file
+      // 2) Write to a temporary file:
       final dir = await getTemporaryDirectory();
       final file = File('${dir.path}/call_${callId}.mp3');
       await file.writeAsBytes(downloadResp.bodyBytes, flush: true);
 
-      // 4) Play from local file
+      // 3) Play from local file:
       await _audioPlayer.play(DeviceFileSource(file.path));
       setState(() {
         _playingStatus[callId] = true;
@@ -324,16 +323,13 @@ class _CallLogsPageState extends State<CallLogsPage> {
   }
 
   Widget _buildCallItem(dynamic call) {
-    final callId =
-        call['call_id']?.toString() ?? call['id']?.toString() ?? '';
+    final callId = call['call_id']?.toString() ?? call['id']?.toString() ?? '';
     final dt = call['start_time'] != null
         ? DateTime.tryParse(call['start_time'])
         : null;
-    final dateText =
-    dt == null ? '---' : DateFormat('HH:mm').format(dt);
+    final dateText = dt == null ? '---' : DateFormat('HH:mm').format(dt);
     final durText = _formatDuration(call['duration']);
-    final name = _getContactName(
-        call['caller_phone']?.toString() ?? '');
+    final name = _getContactName(call['caller_phone']?.toString() ?? '');
     final summary = call['summary'] ?? '';
     final category = call['category'] ?? '';
     final isPlaying = _playingStatus[callId] ?? false;
@@ -361,10 +357,8 @@ class _CallLogsPageState extends State<CallLogsPage> {
                     const SizedBox(width: 6),
                     Chip(
                       label: Text(category,
-                          style:
-                          const TextStyle(fontSize: 12)),
-                      visualDensity:
-                      VisualDensity.compact,
+                          style: const TextStyle(fontSize: 12)),
+                      visualDensity: VisualDensity.compact,
                       materialTapTargetSize:
                       MaterialTapTargetSize.shrinkWrap,
                     ),
@@ -381,9 +375,7 @@ class _CallLogsPageState extends State<CallLogsPage> {
           ),
         ),
         IconButton(
-          icon: Icon(isPlaying
-              ? Icons.pause
-              : Icons.play_arrow),
+          icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
           onPressed: () => _handlePlayPause(call),
         ),
       ],
@@ -419,10 +411,7 @@ class _CallLogsPageState extends State<CallLogsPage> {
     }
     final filteredLogs = _filterCategory == 'Все'
         ? _callLogs
-        : _callLogs
-        .where((c) =>
-    (c['category'] ?? '') == _filterCategory)
-        .toList();
+        : _callLogs.where((c) => (c['category'] ?? '') == _filterCategory).toList();
     final grouped = _groupCallsByTime(filteredLogs);
 
     return Container(
@@ -450,14 +439,9 @@ class _CallLogsPageState extends State<CallLogsPage> {
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
                   value: _filterCategory,
-                  items: cats
-                      .map((c) =>
-                      DropdownMenuItem(value: c, child: Text(c)))
-                      .toList(),
-                  onChanged: (v) =>
-                      setState(() => _filterCategory = v!),
-                  icon:
-                  const Icon(Icons.filter_list, color: Colors.black),
+                  items: cats.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
+                  onChanged: (v) => setState(() => _filterCategory = v!),
+                  icon: const Icon(Icons.filter_list, color: Colors.black),
                 ),
               ),
             ),
@@ -475,29 +459,22 @@ class _CallLogsPageState extends State<CallLogsPage> {
                   padding: const EdgeInsets.all(16),
                   itemCount: grouped.length,
                   itemBuilder: (ctx, i) {
-                    final grp =
-                    grouped.keys.elementAt(i);
+                    final grp = grouped.keys.elementAt(i);
                     final calls = grouped[grp]!;
                     return Column(
-                      crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding:
-                          const EdgeInsets.only(top: 8, bottom: 4),
+                          padding: const EdgeInsets.only(top: 8, bottom: 4),
                           child: Text(grp.toUpperCase(),
                               style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold)),
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
                         ),
                         ...calls.map((call) {
                           return GestureDetector(
                             onTap: () => Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    CallDetailsPage(call: call),
-                              ),
+                              MaterialPageRoute(builder: (_) => CallDetailsPage(call: call)),
                             ),
                             child: Container(
                               margin: const EdgeInsets.only(bottom: 12),
