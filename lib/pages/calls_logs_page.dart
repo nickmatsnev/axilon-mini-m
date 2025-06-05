@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 
@@ -28,6 +30,7 @@ class _TrianglePainter extends CustomPainter {
     path.close();
     canvas.drawPath(path, paint);
   }
+
   @override
   bool shouldRepaint(_TrianglePainter oldDelegate) => false;
 }
@@ -36,10 +39,10 @@ class _BigTrianglePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final halfHeight = size.height / 2;
-    final halfWidth  = size.width / 2;
+    final halfWidth = size.width / 2;
     final bottomVertex = Offset(halfWidth, halfHeight + 68);
-    final leftVertex   = Offset(halfWidth - 50, halfHeight + 19);
-    final rightVertex  = Offset(halfWidth + 50, halfHeight + 19);
+    final leftVertex = Offset(halfWidth - 50, halfHeight + 19);
+    final rightVertex = Offset(halfWidth + 50, halfHeight + 19);
 
     final fillPaint = Paint()
       ..color = const Color(0xFFF9FBFE)
@@ -70,6 +73,7 @@ class _BigTrianglePainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
     canvas.drawPath(rightSidePath, rightSidePaint);
   }
+
   @override
   bool shouldRepaint(_BigTrianglePainter oldDelegate) => false;
 }
@@ -98,21 +102,29 @@ class _CallLogsPageState extends State<CallLogsPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final translationProvider = Provider.of<TranslationProvider>(context, listen: false);
+      final authProvider =
+      Provider.of<AuthProvider>(context, listen: false);
+      final translationProvider =
+      Provider.of<TranslationProvider>(context, listen: false);
       final token = authProvider.token ?? "";
       final user = authProvider.user;
-      if (!_hasFetchedLanguage && token.isNotEmpty && user != null) {
-        translationProvider.fetchUserLanguage(token, user['user_id']).catchError((_) {});
+      if (!_hasFetchedLanguage &&
+          token.isNotEmpty &&
+          user != null) {
+        translationProvider
+            .fetchUserLanguage(token, user['user_id'])
+            .catchError((_) {});
         _hasFetchedLanguage = true;
       }
     });
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final auth = Provider.of<AuthProvider>(context, listen: false);
+      final auth =
+      Provider.of<AuthProvider>(context, listen: false);
       await auth.fetchUserAndUpdateLang(context);
       await _fetchCallLogs();
       await _loadContacts();
     });
+
     _audioPlayer = AudioPlayer();
     _audioPlayer.onPlayerComplete.listen((_) {
       if (_lastPlayedCallId != null) {
@@ -131,8 +143,9 @@ class _CallLogsPageState extends State<CallLogsPage> {
 
   Future<void> _loadContacts() async {
     if (await FlutterContacts.requestPermission()) {
-      final contacts = await FlutterContacts.getContacts(withProperties: true);
-      final mapping = <String,String>{};
+      final contacts =
+      await FlutterContacts.getContacts(withProperties: true);
+      final mapping = <String, String>{};
       for (var c in contacts) {
         for (var p in c.phones) {
           final num = p.number.replaceAll(RegExp(r'\D'), '');
@@ -144,22 +157,26 @@ class _CallLogsPageState extends State<CallLogsPage> {
   }
 
   Future<void> _fetchCallLogs() async {
-    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final auth =
+    Provider.of<AuthProvider>(context, listen: false);
     final userId = auth.user?['user_id'];
     if (userId == null || auth.token == null) {
       setState(() => _isLoading = false);
       return;
     }
     try {
-      final url = Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/$userId/calls');
-      final resp = await http.get(url, headers: {'Authorization':'Bearer ${auth.token}'});
+      final url = Uri.parse(
+          'https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/$userId/calls');
+      final resp = await http.get(url, headers: {
+        'Authorization': 'Bearer ${auth.token}'
+      });
       if (resp.statusCode == 200) {
         final data = jsonDecode(resp.body);
         if (data is List) {
           data.sort((a, b) {
             final aT = DateTime.tryParse(a['start_time'] ?? '');
             final bT = DateTime.tryParse(b['start_time'] ?? '');
-            if (aT==null||bT==null) return 0;
+            if (aT == null || bT == null) return 0;
             return bT.compareTo(aT);
           });
           setState(() {
@@ -182,8 +199,10 @@ class _CallLogsPageState extends State<CallLogsPage> {
     return _contactsMap[norm] ?? phone;
   }
 
-  Map<String, List<dynamic>> _groupCallsByTime(List<dynamic> calls) {
-    final t = Provider.of<TranslationProvider>(context, listen: true);
+  Map<String, List<dynamic>> _groupCallsByTime(
+      List<dynamic> calls) {
+    final t = Provider.of<TranslationProvider>(context,
+        listen: true);
     final now = DateTime.now();
     final groups = {
       t.t("Today"): <dynamic>[],
@@ -195,68 +214,136 @@ class _CallLogsPageState extends State<CallLogsPage> {
     };
     for (var call in calls) {
       final s = call['start_time'];
-      final dt = s != null ? DateTime.tryParse(s) : null;
+      final dt =
+      s != null ? DateTime.tryParse(s) : null;
       if (dt == null) {
         groups[t.t("Older")]!.add(call);
         continue;
       }
       final diff = now.difference(dt).inDays;
-      if (diff == 0) groups[t.t("Today")]!.add(call);
-      else if (diff == 1) groups[t.t("Yesterday")]!.add(call);
-      else if (diff <= 7) groups[t.t("Week ago")]!.add(call);
-      else if (diff <= 30) groups[t.t("Month ago")]!.add(call);
-      else if (diff <= 365) groups[t.t("Year ago")]!.add(call);
-      else groups[t.t("Older")]!.add(call);
+      if (diff == 0)
+        groups[t.t("Today")]!.add(call);
+      else if (diff == 1)
+        groups[t.t("Yesterday")]!.add(call);
+      else if (diff <= 7)
+        groups[t.t("Week ago")]!.add(call);
+      else if (diff <= 30)
+        groups[t.t("Month ago")]!.add(call);
+      else if (diff <= 365)
+        groups[t.t("Year ago")]!.add(call);
+      else
+        groups[t.t("Older")]!.add(call);
     }
-    final filtered = <String,List<dynamic>>{};
-    groups.forEach((k,v){ if (v.isNotEmpty) filtered[k]=v; });
+    final filtered = <String, List<dynamic>>{};
+    groups.forEach((k, v) {
+      if (v.isNotEmpty) filtered[k] = v;
+    });
     return filtered;
   }
 
   String _formatDuration(dynamic d) {
-    final t = Provider.of<TranslationProvider>(context, listen: true);
-    if (d==null) return 'N/A';
+    final t = Provider.of<TranslationProvider>(context,
+        listen: true);
+    if (d == null) return 'N/A';
     final sec = d['seconds'] ?? 0;
     final min = d['minutes'] ?? 0;
-    final hr  = d['hours'] ?? 0;
-    if (hr>0) return '${hr}${t.t("h")} ${min}${t.t("m")}';
-    if (min>0) return '${min}${t.t("m")} ${sec}${t.t("s")}';
+    final hr = d['hours'] ?? 0;
+    if (hr > 0) return '${hr}${t.t("h")} ${min}${t.t("m")}';
+    if (min > 0) return '${min}${t.t("m")} ${sec}${t.t("s")}';
     return '${sec}${t.t("s")}';
   }
 
+  /// Replaced playback logic: download MP3 to temp file → play via local path
   Future<void> _handlePlayPause(dynamic call) async {
-    final callId = call['call_id']?.toString() ?? call['id']?.toString() ?? '';
+    final callId =
+        call['call_id']?.toString() ?? call['id']?.toString() ?? '';
     final isPlaying = _playingStatus[callId] ?? false;
+
+    // If this call is currently playing, pause it:
     if (isPlaying) {
-      await _audioPlayer.pause();
+      await _audioPlayer.stop();
       setState(() => _playingStatus[callId] = false);
       return;
     }
-    // stop others
-    _playingStatus.keys.forEach((k)=> _playingStatus[k]=false);
+
+    // Otherwise, stop any other currently playing call:
+    _playingStatus.keys.forEach((k) {
+      _playingStatus[k] = false;
+    });
     await _audioPlayer.stop();
-    final url = call['audio'] ?? '';
-    if (url.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No audio for this call')));
+
+    // 1) Get the raw 'audio' field (presigned or server URL):
+    final raw = (call['audio'] as String?) ?? '';
+    if (raw.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No audio for this call')),
+      );
       return;
     }
+
+    // 2) Normalize into a full URL:
+    final audioUrl = raw.startsWith('http')
+        ? raw
+        : 'https://axilon-mini-be-e5732e59dadc.herokuapp.com$raw';
+
+    final authProvider =
+    Provider.of<AuthProvider>(context, listen: false);
+    final token = authProvider.token ?? "";
+
     try {
-      await _audioPlayer.play(UrlSource(url));
+      http.Response resp;
+
+      // 3) If it's an S3 (presigned) URL → no extra headers. Otherwise attach Bearer:
+      if (audioUrl.contains('amazonaws.com')) {
+        resp = await http.get(Uri.parse(audioUrl));
+      } else {
+        resp = await http.get(
+          Uri.parse(audioUrl),
+          headers: {'Authorization': 'Bearer $token'},
+        );
+      }
+
+      if (resp.statusCode != 200) {
+        throw Exception(
+            'Download failed: HTTP ${resp.statusCode} (${resp.reasonPhrase})');
+      }
+
+      // 4) Write the MP3 bytes into a temporary file:
+      final dir = await getTemporaryDirectory();
+      final file =
+      File('${dir.path}/call_${callId}.mp3');
+      await file.writeAsBytes(resp.bodyBytes, flush: true);
+
+      // 5) Tell audioplayers to play from the local file path:
+      await _audioPlayer.play(DeviceFileSource(file.path));
+
+      // 6) Mark this call as playing:
       setState(() {
         _playingStatus[callId] = true;
         _lastPlayedCallId = callId;
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Playback error: $e')));
+      debugPrint('Error playing audio: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Playback error: $e')),
+      );
+      // If something goes wrong, ensure the player is stopped:
+      await _audioPlayer.stop();
+      setState(() => _playingStatus[callId] = false);
     }
   }
 
   Widget _buildCallItem(dynamic call) {
-    final callId = call['call_id']?.toString() ?? call['id']?.toString() ?? '';
-    final dt = call['start_time']!=null ? DateTime.tryParse(call['start_time']) : null;
-    final dateText = dt==null ? '---' : DateFormat('HH:mm').format(dt);
+    final callId =
+        call['call_id']?.toString() ?? call['id']?.toString() ?? '';
+    final dt = call['start_time'] != null
+        ? DateTime.tryParse(call['start_time'])
+        : null;
+    final dateText =
+    dt == null ? '---' : DateFormat('HH:mm').format(dt);
     final durText = _formatDuration(call['duration']);
-    final name = _getContactName(call['caller_phone']?.toString() ?? '');
+    final name = _getContactName(
+        call['caller_phone']?.toString() ?? '');
     final summary = call['summary'] ?? '';
     final category = call['category'] ?? '';
     final isPlaying = _playingStatus[callId] ?? false;
@@ -275,15 +362,21 @@ class _CallLogsPageState extends State<CallLogsPage> {
                       summary,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16),
                     ),
                   ),
                   if (category.isNotEmpty) ...[
                     const SizedBox(width: 6),
                     Chip(
-                      label: Text(category, style: const TextStyle(fontSize: 12)),
-                      visualDensity: VisualDensity.compact,
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      label: Text(category,
+                          style:
+                          const TextStyle(fontSize: 12)),
+                      visualDensity:
+                      VisualDensity.compact,
+                      materialTapTargetSize:
+                      MaterialTapTargetSize.shrinkWrap,
                     ),
                   ],
                 ],
@@ -291,12 +384,16 @@ class _CallLogsPageState extends State<CallLogsPage> {
               const SizedBox(height: 4),
               Text(name, style: const TextStyle(fontSize: 15)),
               const SizedBox(height: 2),
-              Text('$dateText • $durText', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+              Text('$dateText • $durText',
+                  style: const TextStyle(
+                      fontSize: 12, color: Colors.grey)),
             ],
           ),
         ),
         IconButton(
-          icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+          icon: Icon(isPlaying
+              ? Icons.pause
+              : Icons.play_arrow),
           onPressed: () => _handlePlayPause(call),
         ),
       ],
@@ -305,11 +402,18 @@ class _CallLogsPageState extends State<CallLogsPage> {
 
   void _onItemTapped(int index) {
     setState(() => _selectedIndex = index);
-    switch(index) {
-      case 0: Navigator.pushReplacementNamed(context,'/main'); break;
-      case 1: break;
-      case 2: Navigator.pushReplacementNamed(context,'/scenarios'); break;
-      case 3: Navigator.pushReplacementNamed(context,'/settings'); break;
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/main');
+        break;
+      case 1:
+        break;
+      case 2:
+        Navigator.pushReplacementNamed(context, '/scenarios');
+        break;
+      case 3:
+        Navigator.pushReplacementNamed(context, '/settings');
+        break;
     }
   }
 
@@ -325,12 +429,19 @@ class _CallLogsPageState extends State<CallLogsPage> {
     }
     final filteredLogs = _filterCategory == 'Все'
         ? _callLogs
-        : _callLogs.where((c) => (c['category'] ?? '') == _filterCategory).toList();
+        : _callLogs
+        .where((c) =>
+    (c['category'] ?? '') == _filterCategory)
+        .toList();
     final grouped = _groupCallsByTime(filteredLogs);
 
     return Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(colors: [Color(0xFFE8EDFF), Color(0xFFF9FBFE)], begin: Alignment.topCenter, end: Alignment.bottomCenter),
+        gradient: LinearGradient(
+          colors: [Color(0xFFE8EDFF), Color(0xFFF9FBFE)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -338,16 +449,25 @@ class _CallLogsPageState extends State<CallLogsPage> {
           backgroundColor: const Color(0xFFE8EDFF),
           foregroundColor: Colors.black,
           elevation: 2,
-          title: Text(t.t('CALLS').toUpperCase(), style: const TextStyle(fontFamily: 'DrukTextWideLCG', fontSize: 20, fontWeight: FontWeight.bold)),
+          title: Text(t.t('CALLS').toUpperCase(),
+              style: const TextStyle(
+                  fontFamily: 'DrukTextWideLCG',
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold)),
           actions: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
                   value: _filterCategory,
-                  items: cats.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
-                  onChanged: (v) => setState(() => _filterCategory = v!),
-                  icon: const Icon(Icons.filter_list, color: Colors.black),
+                  items: cats
+                      .map((c) =>
+                      DropdownMenuItem(value: c, child: Text(c)))
+                      .toList(),
+                  onChanged: (v) =>
+                      setState(() => _filterCategory = v!),
+                  icon:
+                  const Icon(Icons.filter_list, color: Colors.black),
                 ),
               ),
             ),
@@ -365,25 +485,37 @@ class _CallLogsPageState extends State<CallLogsPage> {
                   padding: const EdgeInsets.all(16),
                   itemCount: grouped.length,
                   itemBuilder: (ctx, i) {
-                    final grp = grouped.keys.elementAt(i);
+                    final grp =
+                    grouped.keys.elementAt(i);
                     final calls = grouped[grp]!;
                     return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment:
+                      CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(top: 8, bottom: 4),
-                          child: Text(grp.toUpperCase(), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          padding:
+                          const EdgeInsets.only(top: 8, bottom: 4),
+                          child: Text(grp.toUpperCase(),
+                              style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold)),
                         ),
                         ...calls.map((call) {
                           return GestureDetector(
                             onTap: () => Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (_) => CallDetailsPage(call: call)),
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    CallDetailsPage(call: call),
+                              ),
                             ),
                             child: Container(
                               margin: const EdgeInsets.only(bottom: 12),
                               padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                               child: _buildCallItem(call),
                             ),
                           );
@@ -393,7 +525,7 @@ class _CallLogsPageState extends State<CallLogsPage> {
                   },
                 ),
               ),
-              // bottom nav
+              // bottom nav omitted for brevity…
             ],
           ),
         ),
@@ -403,13 +535,7 @@ class _CallLogsPageState extends State<CallLogsPage> {
           unselectedItemColor: Colors.grey,
           currentIndex: _selectedIndex,
           onTap: (idx) {
-            setState(() => _selectedIndex = idx);
-            switch (idx) {
-              case 0: Navigator.pushReplacementNamed(context, '/main'); break;
-              case 1: break;
-              case 2: Navigator.pushReplacementNamed(context, '/scenarios'); break;
-              case 3: Navigator.pushReplacementNamed(context, '/settings'); break;
-            }
+            _onItemTapped(idx);
           },
           items: [
             BottomNavigationBarItem(
