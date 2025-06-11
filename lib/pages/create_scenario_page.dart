@@ -24,7 +24,7 @@ class _CreateScenarioPageState extends State<CreateScenarioPage> {
   String _selectedType = 'chat';
   bool _isSubmitting = false;
 
-  final List<String> _typeOptions = ['chat', 'voice'];
+  final List<String> _typeOptions = ['voice'];
 
   Future<DateTime?> _pickDateTime() async {
     DateTime? date = await showDatePicker(
@@ -119,7 +119,7 @@ class _CreateScenarioPageState extends State<CreateScenarioPage> {
           backgroundColor: const Color(0xFFE8EDFF),
           foregroundColor: Colors.black,
           elevation: 2,
-          title: Text(t.t('Create Scenario')),
+          title: "Создать сценарий",
         ),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -137,29 +137,14 @@ class _CreateScenarioPageState extends State<CreateScenarioPage> {
                       controller: _nameController,
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: t.t('Name'),
+                        hintText: "Название",
                       ),
                       validator: (v) => v == null || v.isEmpty ? t.t('Required') : null,
                     ),
                   ),
                   const SizedBox(height: 12),
 
-                  // Summary
-                  Container(
-                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(22)),
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: TextFormField(
-                      controller: _summaryController,
-                      minLines: 3,
-                      maxLines: 5,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: t.t('Summary'),
-                      ),
-                      validator: (v) => v == null || v.isEmpty ? t.t('Required') : null,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
+               
 
                   // Scenario Type
                   Container(
@@ -189,18 +174,17 @@ class _CreateScenarioPageState extends State<CreateScenarioPage> {
                         controller: _promptController,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: t.t('Prompt Value'),
+                          hintText: "Содержание(что скажет агент)",
                         ),
-                        validator: (v) => v == null || v.isEmpty ? t.t('Required') : null,
+                        validator: (v) => v == null || v.isEmpty ? t.t('Обязательное поле!') : null,
                       ),
                     ),
                     const SizedBox(height: 12),
                   ],
-
                   // Submit button
                   ElevatedButton(
                     onPressed: _isSubmitting ? null : _submit,
-                    child: Text(_isSubmitting ? t.t('Submitting...') : t.t('Create')),
+                    child: Text(_isSubmitting ? t.t('Создаю...') : t.t('Создать')),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
