@@ -119,7 +119,7 @@ class _CreateScenarioPageState extends State<CreateScenarioPage> {
           backgroundColor: const Color(0xFFE8EDFF),
           foregroundColor: Colors.black,
           elevation: 2,
-          title: "Создать сценарий",
+          title: Text("Создать сценарий"),
         ),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -137,7 +137,7 @@ class _CreateScenarioPageState extends State<CreateScenarioPage> {
                       controller: _nameController,
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: "Название",
+                        hintText: Text("Название"),
                       ),
                       validator: (v) => v == null || v.isEmpty ? t.t('Required') : null,
                     ),
@@ -174,7 +174,7 @@ class _CreateScenarioPageState extends State<CreateScenarioPage> {
                         controller: _promptController,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: "Содержание(что скажет агент)",
+                          hintText: Text("Содержание(что скажет агент)"),
                         ),
                         validator: (v) => v == null || v.isEmpty ? t.t('Обязательное поле!') : null,
                       ),
