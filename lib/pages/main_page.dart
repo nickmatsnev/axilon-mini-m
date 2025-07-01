@@ -72,7 +72,7 @@ class _MainPageState extends State<MainPage> {
       if (user != null) {
         NotificationService().initialize(user['user_id']);
       }
-    });
+    };
   }
 
   Future<void> _fetchScenarios() async {
@@ -103,7 +103,7 @@ class _MainPageState extends State<MainPage> {
   }
   String _cleanAndTitle(String raw) {
     String extracted;
-    try {
+    try {ca
       final obj = jsonDecode(raw);
       extracted = obj['message'] ?? raw;
     } catch (_) {

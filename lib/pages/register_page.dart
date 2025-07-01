@@ -59,10 +59,9 @@ class _RegisterPageState extends State<RegisterPage> {
       // Если вы тестируете на Android, getAPNSToken вернёт null, и это нормально.
       String? apnsToken;
       if (Theme.of(context).platform == TargetPlatform.iOS) {
-        apnsToken = "testfix"; // await FirebaseMessaging.instance.getAPNSToken();
+         await FirebaseMessaging.instance.getAPNSToken();
         debugPrint('APNs token: $apnsToken');
-        // Если apnsToken ещё null, можно попробовать снова подождать пару секунд
-        // или выдать SnackBar о том, что нужно перезайти в приложение.
+        await FirebaseMessaging.instance.getToken();
       }
 
       // 2) Теперь получаем FCM-токен
