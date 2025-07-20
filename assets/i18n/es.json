@@ -134,6 +134,18 @@
   "Dial **61*644604261**20# to set up call forwarding for no answer.\nDial **62*644604261# to set up call forwarding for unreachable.\nDial **67*644604261# to set up call forwarding for busy.": "Marca **61*644604261**20# para configurar el desvío de llamadas cuando no hay respuesta.\nMarca **62*644604261# para configurar el desvío de llamadas cuando estés fuera de alcance.\nMarca **67*644604261# para configurar el desvío de llamadas cuando la línea esté ocupada.",
   "Dial **61*25030950**20# to set up call forwarding for no answer.\nDial **62*25030950# to set up call forwarding for unreachable.\nDial **67*25030950# to set up call forwarding for busy.": "Marca **61*25030950**20# para configurar el desvío de llamadas cuando no hay respuesta.\nMarca **62*25030950# para configurar el desvío de llamadas cuando estés fuera de alcance.\nMarca **67*25030950# para configurar el desvío de llamadas cuando la línea esté ocupada.",
   "Dial **61*9014172717**20# to set up call forwarding for no answer.\nDial **62*9014172717# to set up call forwarding for unreachable.\nDial **67*9014172717# to set up call forwarding for busy.": "Marca **61*9014172717**20# para configurar el desvío de llamadas cuando no hay respuesta.\nMarca **62*9014172717# para configurar el desvío de llamadas cuando estés fuera de alcance.\nMarca **67*9014172717# para configurar el desvío de llamadas cuando la línea esté ocupada.",
-  "Dial **61*2369362050**20# to set up call forwarding for no answer.": "Marca **61*2369362050**20# para configurar el desvío de llamadas cuando no hay respuesta."
-
+  "Dial **61*2369362050**20# to set up call forwarding for no answer.": "Marca **61*2369362050**20# para configurar el desvío de llamadas cuando no hay respuesta.",
+  "Tap DIAL to execute code or COPY to copy it.": "Pulsa DIAL para ejecutar el código o COPY para copiarlo.",
+  "COPY": "COPIAR",
+  "DIAL": "MARCAR",
+  "USSD code copied to clipboard": "Código USSD copiado al portapapeles",
+  "Copy All Codes": "Copiar todos los códigos",
+  "All USSD codes copied": "Todos los códigos USSD copiados",
+  "No Answer": "Sin respuesta",
+  "Unreachable": "Inalcanzable",
+  "Busy": "Ocupado",
+  "Forward if you do not pick up within 20s.": "Desviar si no atiendes en 20 s.",
+  "Forward when phone is off/out of coverage.": "Desviar cuando el teléfono está apagado o sin cobertura.",
+  "Forward when line is engaged.": "Desviar cuando la línea está ocupada.",
+  "Go to Assistant selection": "Ir a la selección de asistente"
 }

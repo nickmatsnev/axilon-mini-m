@@ -135,6 +135,19 @@
   "Dial **61*644604261**20# to set up call forwarding for no answer.\nDial **62*644604261# to set up call forwarding for unreachable.\nDial **67*644604261# to set up call forwarding for busy.": "Wählen Sie **61*644604261**20#, um Anrufweiterleitung bei keiner Antwort einzurichten.\nWählen Sie **62*644604261#, um Anrufweiterleitung bei Unerreichbarkeit einzurichten.\nWählen Sie **67*644604261#, um Anrufweiterleitung bei Besetzt einzurichten.",
   "Dial **61*25030950**20# to set up call forwarding for no answer.\nDial **62*25030950# to set up call forwarding for unreachable.\nDial **67*25030950# to set up call forwarding for busy.": "Wählen Sie **61*25030950**20#, um Anrufweiterleitung bei keiner Antwort einzurichten.\nWählen Sie **62*25030950#, um Anrufweiterleitung bei Unerreichbarkeit einzurichten.\nWählen Sie **67*25030950#, um Anrufweiterleitung bei Besetzt einzurichten.",
   "Dial **61*9014172717**20# to set up call forwarding for no answer.\nDial **62*9014172717# to set up call forwarding for unreachable.\nDial **67*9014172717# to set up call forwarding for busy.": "Wählen Sie **61*9014172717**20#, um Anrufweiterleitung bei keiner Antwort einzurichten.\nWählen Sie **62*9014172717#, um Anrufweiterleitung bei Unerreichbarkeit einzurichten.\nWählen Sie **67*9014172717#, um Anrufweiterleitung bei Besetzt einzurichten.",
-  "Dial **61*2369362050**20# to set up call forwarding for no answer.": "Wählen Sie **61*2369362050**20#, um Anrufweiterleitung bei keiner Antwort einzurichten."
+  "Dial **61*2369362050**20# to set up call forwarding for no answer.": "Wählen Sie **61*2369362050**20#, um Anrufweiterleitung bei keiner Antwort einzurichten.",
 
+  "Tap DIAL to execute code or COPY to copy it.": "Tippe auf DIAL zum Ausführen oder COPY zum Kopieren.",
+  "COPY": "Kopieren",
+  "DIAL": "Wählen",
+  "USSD code copied to clipboard": "USSD-Code in Zwischenablage kopiert",
+  "Copy All Codes": "Alle Codes kopieren",
+  "All USSD codes copied": "Alle USSD-Codes kopiert",
+  "No Answer": "Keine Antwort",
+  "Unreachable": "Nicht erreichbar",
+  "Busy": "Besetzt",
+  "Forward if you do not pick up within 20s.": "Weiterleiten, falls du innerhalb von 20 s nicht abhebst.",
+  "Forward when phone is off/out of coverage.": "Weiterleiten, wenn das Handy aus oder ohne Empfang ist.",
+  "Forward when line is engaged.": "Weiterleiten, wenn die Leitung besetzt ist.",
+  "Go to Assistant selection": "Zur Assistenten-Auswahl"
 }

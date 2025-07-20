@@ -103,7 +103,7 @@ class _MainPageState extends State<MainPage> {
   }
   String _cleanAndTitle(String raw) {
     String extracted;
-    try {ca
+    try {
       final obj = jsonDecode(raw);
       extracted = obj['message'] ?? raw;
     } catch (_) {

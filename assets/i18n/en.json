@@ -126,5 +126,18 @@
   "Clone Voice": "Clone Voice",
   "Voice Name": "Voice Name",
   "Voice Description": "Voice Description",
-  "AI Assistant": "AI Assistant"
+  "AI Assistant": "AI Assistant",
+  "Tap DIAL to execute code or COPY to copy it.": "Tap DIAL to execute code or COPY to copy it.",
+  "COPY": "COPY",
+  "DIAL": "DIAL",
+  "USSD code copied to clipboard": "USSD code copied to clipboard",
+  "Copy All Codes": "Copy All Codes",
+  "All USSD codes copied": "All USSD codes copied",
+  "No Answer": "No Answer",
+  "Unreachable": "Unreachable",
+  "Busy": "Busy",
+  "Forward if you do not pick up within 20s.": "Forward if you do not pick up within 20s.",
+  "Forward when phone is off/out of coverage.": "Forward when phone is off/out of coverage.",
+  "Forward when line is engaged.": "Forward when line is engaged.",
+  "Go to Assistant selection": "Go to Assistant selection"
 }

@@ -134,6 +134,18 @@
   "Dial **61*644604261**20# to set up call forwarding for no answer.\nDial **62*644604261# to set up call forwarding for unreachable.\nDial **67*644604261# to set up call forwarding for busy.": "Vytočte **61*644604261**20# pro nastavení přesměrování, pokud neodpovídáte.\nVytočte **62*644604261#, pro nastavení přesměrování, pokud jste nedostupní.\nVytočte **67*644604261#, pro nastavení přesměrování, pokud je obsazeno.",
   "Dial **61*25030950**20# to set up call forwarding for no answer.\nDial **62*25030950# to set up call forwarding for unreachable.\nDial **67*25030950# to set up call forwarding for busy.": "Vytočte **61*25030950**20# pro nastavení přesměrování, pokud neodpovídáte.\nVytočte **62*25030950#, pro nastavení přesměrování, pokud jste nedostupní.\nVytočte **67*25030950#, pro nastavení přesměrování, pokud je obsazeno.",
   "Dial **61*9014172717**20# to set up call forwarding for no answer.\nDial **62*9014172717# to set up call forwarding for unreachable.\nDial **67*9014172717# to set up call forwarding for busy.": "Vytočte **61*9014172717**20# pro nastavení přesměrování, pokud neodpovídáte.\nVytočte **62*9014172717#, pro nastavení přesměrování, pokud jste nedostupní.\nVytočte **67*9014172717#, pro nastavení přesměrování, pokud je obsazeno.",
-  "Dial **61*2369362050**20# to set up call forwarding for no answer.": "Vytočte **61*2369362050**20# pro nastavení přesměrování, pokud neodpovídáte."
-
+  "Dial **61*2369362050**20# to set up call forwarding for no answer.": "Vytočte **61*2369362050**20# pro nastavení přesměrování, pokud neodpovídáte.",
+  "Tap DIAL to execute code or COPY to copy it.": "Klepněte na DIAL pro vytočení nebo COPY pro zkopírování.",
+  "COPY": "Kopírovat",
+  "DIAL": "Vytočit",
+  "USSD code copied to clipboard": "USSD kód zkopírován do schránky",
+  "Copy All Codes": "Zkopírovat všechny kódy",
+  "All USSD codes copied": "Všechny USSD kódy zkopírovány",
+  "No Answer": "Bez odpovědi",
+  "Unreachable": "Nedostupné",
+  "Busy": "Obsazeno",
+  "Forward if you do not pick up within 20s.": "Přesměrovat, pokud nezvednete do 20 s.",
+  "Forward when phone is off/out of coverage.": "Přesměrovat, když je telefon vypnutý nebo mimo signál.",
+  "Forward when line is engaged.": "Přesměrovat, když je linka obsazena.",
+  "Go to Assistant selection": "Přejít k výběru asistenta"
 }
