@@ -72,7 +72,7 @@ class _MainPageState extends State<MainPage> {
       if (user != null) {
         NotificationService().initialize(user['user_id']);
       }
-    };
+    });
   }
 
   Future<void> _fetchScenarios() async {

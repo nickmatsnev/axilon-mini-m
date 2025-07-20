@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -37,8 +38,8 @@ class UssdSetupPage extends StatelessWidget {
               tooltip: translationProvider.t('Copy All Codes'),
               icon: const Icon(Icons.copy_all),
               onPressed: () async {
-                final actions =
-                UssdInfoData.fromPhone(phoneNumber).generateActions();
+                final actions = 
+                UssdInfoData(phoneNumber).generateActions();
                 final all = actions.map((a) => a.code).join('\n');
                 await copyToClipboard(context, all,
                     translationProvider.t('All USSD codes copied'));

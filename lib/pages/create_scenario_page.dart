@@ -137,7 +137,7 @@ class _CreateScenarioPageState extends State<CreateScenarioPage> {
                       controller: _nameController,
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: Text("Название"),
+                        hintText: "Название",
                       ),
                       validator: (v) => v == null || v.isEmpty ? t.t('Required') : null,
                     ),
@@ -174,7 +174,7 @@ class _CreateScenarioPageState extends State<CreateScenarioPage> {
                         controller: _promptController,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: Text("Содержание(что скажет агент)"),
+                          hintText: "Содержание(что скажет агент)",
                         ),
                         validator: (v) => v == null || v.isEmpty ? t.t('Обязательное поле!') : null,
                       ),
