@@ -45,83 +45,71 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 Future<void> initFCM(BuildContext context) async {
-  // 1) Запросим у пользователя права (iOS > 13, Android 13+)
-  NotificationSettings settings =
-  await FirebaseMessaging.instance.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-    provisional: false,
+  // 1) ask notifications permission
+  final settings = await FirebaseMessaging.instance.requestPermission(
+    alert: true, badge: true, sound: true, provisional: false,
   );
-  debugPrint('User granted permission: ${settings.authorizationStatus}');
+  debugPrint('⚡️ Permission status: ${settings.authorizationStatus}');
 
-  // 2) Явно дождёмся APNs токена (только для iOS)
+  // 2) on iOS, wait up to 10s for APNs token
   if (Theme.of(context).platform == TargetPlatform.iOS) {
-    String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
-    debugPrint('APNs token (iOS): $apnsToken');
-    // Если apnsToken == null, возможно, iOS ещё не зарегистрировался → можно повторить попытку или сообщить пользователю.
-  }
-
-  // 3) Получим FCM токен
-  String? fcmToken = await FirebaseMessaging.instance.getToken();
-  debugPrint('FCM token: $fcmToken');
-
-  if (fcmToken != null) {
-    // 4) Отправим FCM token на ваш бэкенд
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    if (authProvider.token != null) {
-      try {
-        final bearerToken = authProvider.token;
-        final response = await http.post(
-          Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/set-fcm-token'),
-          headers: {
-            'Authorization': 'Bearer $bearerToken',
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({
-            'fcm_token': fcmToken,
-          }),
-        );
-
-        if (authProvider.user?['user_id'] != null) {
-          NotificationService().initialize(authProvider.user!['user_id']);
-        }
-        if (response.statusCode == 200) {
-          debugPrint('✅ FCM token сохранён на сервере');
-        } else {
-          debugPrint(
-              '❌ Ошибка сохранения FCM token: ${response.statusCode} → ${response.body}');
-        }
-      } catch (e) {
-        debugPrint('❌ Исключение при сохранении FCM token: $e');
+    String? apnsToken;
+    int attempts = 0;
+    while (apnsToken == null && attempts < 10) {
+      apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+      if (apnsToken == null) {
+        await Future.delayed(const Duration(seconds: 1));
+        attempts++;
       }
+    }
+    if (apnsToken == null) {
+      debugPrint('⚠️ APNs token not received after ${attempts}s');
+    } else {
+      debugPrint('✅ APNs token: $apnsToken');
     }
   }
 
-  // 5) Слушаем обновление токена (например, когда пользователь переустановил приложение или сбросил уведомления)
+  // 3) now retrieve the FCM token
+  final fcmToken = await FirebaseMessaging.instance.getToken();
+  if (fcmToken == null) {
+    debugPrint('❌ Unable to fetch FCM token.');
+    return;
+  }
+  debugPrint('🔑 FCM token: $fcmToken');
+
+  // 4) send to backend
+  final auth = Provider.of<AuthProvider>(context, listen: false);
+  if (auth.token != null) {
+    try {
+      final resp = await http.post(
+        Uri.parse('https://…/api/users/set-fcm-token'),
+        headers: {
+          'Authorization': 'Bearer ${auth.token}',
+          'Content-Type': 'application/json'
+        },
+        body: jsonEncode({'fcm_token': fcmToken}),
+      );
+      debugPrint('FCM token saved: ${resp.statusCode}');
+    } catch (e) {
+      debugPrint('Exception sending FCM token: $e');
+    }
+  }
+
+  // 5) listen for future token refreshes
   FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
     debugPrint('🔄 FCM token refreshed: $newToken');
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    if (authProvider.token != null) {
-      try {
-        final bearerToken = authProvider.token;
-        await http.post(
-          Uri.parse('https://axilon-mini-be-e5732e59dadc.herokuapp.com/api/users/set-fcm-token'),
-          headers: {
-            'Authorization': 'Bearer $bearerToken',
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({
-            'fcm_token': newToken,
-          }),
-        );
-      } catch (e) {
-        debugPrint('Ошибка обновления FCM token: $e');
-      }
+    if (auth.token != null) {
+      await http.post(
+        Uri.parse('https://…/api/users/set-fcm-token'),
+        headers: {
+          'Authorization': 'Bearer ${auth.token}',
+          'Content-Type': 'application/json'
+        },
+        body: jsonEncode({'fcm_token': newToken}),
+      );
     }
   });
 }
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
