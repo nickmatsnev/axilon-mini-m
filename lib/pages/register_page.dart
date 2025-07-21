@@ -1,7 +1,6 @@
 // lib/pages/register_page.dart
 
 import 'package:flutter/material.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:intl_phone_field/countries.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:provider/provider.dart';
@@ -16,10 +15,10 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final firstNameController  = TextEditingController();
-  final lastNameController   = TextEditingController();
-  final phoneController      = TextEditingController();
-  final passwordController   = TextEditingController();
+  final firstNameController = TextEditingController();
+  final lastNameController  = TextEditingController();
+  final phoneController     = TextEditingController();
+  final passwordController  = TextEditingController();
 
   String? selectedCountryIso; // e.g. "CZ", "US"
   String? selectedDialCode;   // e.g. "+420"
@@ -32,10 +31,10 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void initState() {
     super.initState();
-    // Оставляем только нужные страны в списке
-    allowedCountries = countries.where((c) {
-      return allowedCountryCodes.contains(c.code);
-    }).toList();
+    // Keep only the allowed countries
+    allowedCountries = countries
+        .where((c) => allowedCountryCodes.contains(c.code))
+        .toList();
   }
 
   Future<void> _onRegisterPressed() async {
@@ -44,51 +43,29 @@ class _RegisterPageState extends State<RegisterPage> {
     });
 
     try {
-      // 1) Ждём, пока iOS/Android получит APNs токен и обменяет его на FCM токен
-      //    Очень важно: сначала дождаться getAPNSToken (iOS), иначе getToken вернёт null.
-      NotificationSettings settings =
-      await FirebaseMessaging.instance.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
-        provisional: false,
-      );
-      debugPrint('Push permission: ${settings.authorizationStatus}');
+      // — Remove/disable real FCM logic here —
+      // We simply use a dummy token for now:
+      const fcmToken = 'dummy-fcm-token';
 
-      // Явно ждём, пока iOS зарегистрируется в APNs и вернёт APNs-token.
-      // Если вы тестируете на Android, getAPNSToken вернёт null, и это нормально.
-      String? apnsToken;
-      if (Theme.of(context).platform == TargetPlatform.iOS) {
-         await FirebaseMessaging.instance.getAPNSToken();
-        debugPrint('APNs token: $apnsToken');
-        await FirebaseMessaging.instance.getToken();
-      }
+      // 1) Prepare form fields
+      final formattedPhone =
+          '${selectedDialCode ?? ''}${phoneController.text.trim()}';
+      final countryIso = selectedCountryIso ?? 'US';
+      final firstName  = firstNameController.text.trim();
+      final lastName   = lastNameController.text.trim();
+      final password   = passwordController.text.trim();
 
-      // 2) Теперь получаем FCM-токен
-      String? fcmToken = "temporsry-fix"; // await FirebaseMessaging.instance.getToken();
-      debugPrint('FCM token: $fcmToken');
-      if (fcmToken == null) {
-        throw Exception('Не удалось получить FCM token');
-      }
-
-      // 3) Форматируем поля формы
-      final formattedPhone = '${selectedDialCode ?? ''}${phoneController.text.trim()}';
-      final countryIso     = selectedCountryIso ?? 'US';
-      final firstName      = firstNameController.text.trim();
-      final lastName       = lastNameController.text.trim();
-      final password       = passwordController.text.trim();
-
-      // 4) Вызываем метод AuthProvider.register и передаём fcmToken
+      // 2) Call your AuthProvider.register with dummy token
       await Provider.of<AuthProvider>(context, listen: false).register(
         firstName,
         lastName,
         formattedPhone,
         password,
         countryIso,
-        fcmToken, // <— обязательно передаём сюда
+        fcmToken,
       );
 
-      // 5) Если регистрация успешна, переходим дальше
+      // 3) On success, navigate on
       if (!mounted) return;
       Navigator.pushReplacementNamed(context, '/ussd');
     } catch (e) {
@@ -112,7 +89,7 @@ class _RegisterPageState extends State<RegisterPage> {
         gradient: LinearGradient(
           colors: [
             Color.fromRGBO(187, 200, 253, 1),
-            Color.fromRGBO(232, 239, 255, 1)
+            Color.fromRGBO(232, 239, 255, 1),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -213,7 +190,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       const SizedBox(height: 20),
 
-                      // Кнопка «Зарегистрироваться»
+                      // Register Button
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.indigo,
@@ -238,7 +215,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       const SizedBox(height: 10),
 
-                      // Уже есть аккаунт?
+                      // Already have account?
                       TextButton(
                         onPressed: () {
                           Navigator.pushReplacementNamed(context, '/');
