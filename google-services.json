@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1087204897045",
+    "project_id": "axilon-mini-m",
+    "storage_bucket": "axilon-mini-m.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1087204897045:android:2b594a293ee3ac21ab391c",
+        "android_client_info": {
+          "package_name": "com.example.axilon_mini_m"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6tRvSStRE3veRqPmwNoW-UwRO-R0X5to"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

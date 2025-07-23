@@ -1417,6 +1417,32 @@ class _SettingsPageState extends State<SettingsPage>
       debugPrint("Users-country error: ${resp.body}");
     }
   }
+  Future<String> _fetchLogs() async {
+    final resp = await http.get(Uri.parse("https://your-server.com/logs"));
+    if (resp.statusCode == 200) return resp.body;
+    throw "Failed to load logs";
+  }
+  Widget _buildLogsTab() {
+    return FutureBuilder<String>(
+      future: _fetchLogs(),
+      builder: (ctx, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snap.hasError) {
+          return Center(child: Text("Error: ${snap.error}"));
+        } else {
+          final lines = snap.data!.split('\n');
+          return ListView.builder(
+            itemCount: lines.length,
+            itemBuilder: (_, i) => Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              child: Text(lines[i], style: const TextStyle(fontSize: 12)),
+            ),
+          );
+        }
+      },
+    );
+  }
 
   Widget _buildStatsTab() {
     if (_isLoadingStats) {
@@ -2333,6 +2359,7 @@ class _SettingsPageState extends State<SettingsPage>
                     Tab(text: translationProvider.t("Tasks")),
                     Tab(text: translationProvider.t("Agents")),
                     Tab(text: translationProvider.t("Stats")),
+                    Tab(text: translationProvider.t("Logs")),
                     Tab(text: translationProvider.t("Scenario Admin")),
                     Tab(text: translationProvider.t("Scenarios Stats")),
                   ],
@@ -2350,6 +2377,7 @@ class _SettingsPageState extends State<SettingsPage>
                       _buildTasksTab(),
                       _buildAgentsTab(),
                       _buildStatsTab(),
+                      _buildLogsTab(),
                       const ScenarioAdminWidget(),
                       const ScenarioStatsWidget(),
                     ],
