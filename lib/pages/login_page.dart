@@ -1,3 +1,4 @@
+import 'package:axilon_mini_m/pages/reset_password_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -170,6 +171,15 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: () => Navigator.pushReplacementNamed(context, '/register'),
                         child: const Text("Отсутствует учётная запись? Зарегистрируйся!"),
                       ),
+                      const SizedBox(height: 10),
+                      TextButton(
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const ResetPasswordPage()),
+                        ),
+                        child: const Text("Забыли пароль? Сбросить"),
+                      ),
+
                     ],
                   ),
                 ),

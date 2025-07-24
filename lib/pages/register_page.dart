@@ -46,23 +46,23 @@ class _RegisterPageState extends State<RegisterPage> {
     try {
       // 1) Ждём, пока iOS/Android получит APNs токен и обменяет его на FCM токен
       //    Очень важно: сначала дождаться getAPNSToken (iOS), иначе getToken вернёт null.
-      NotificationSettings settings =
-      await FirebaseMessaging.instance.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
-        provisional: false,
-      );
-      debugPrint('Push permission: ${settings.authorizationStatus}');
+      // NotificationSettings settings =
+      // await FirebaseMessaging.instance.requestPermission(
+      //   alert: true,
+      //   badge: true,
+      //   sound: true,
+      //   provisional: false,
+      // );
+      // debugPrint('Push permission: ${settings.authorizationStatus}');
 
       // Явно ждём, пока iOS зарегистрируется в APNs и вернёт APNs-token.
       // Если вы тестируете на Android, getAPNSToken вернёт null, и это нормально.
-      String? apnsToken;
-      if (Theme.of(context).platform == TargetPlatform.iOS) {
-        await FirebaseMessaging.instance.getAPNSToken();
-        debugPrint('APNs token: $apnsToken');
-        await FirebaseMessaging.instance.getToken();
-      }
+      // String? apnsToken;
+      // if (Theme.of(context).platform == TargetPlatform.iOS) {
+      //   await FirebaseMessaging.instance.getAPNSToken();
+      //   debugPrint('APNs token: $apnsToken');
+      //   await FirebaseMessaging.instance.getToken();
+      // }
 
       // 2) Теперь получаем FCM-токен
       String? fcmToken = "temporsry-fix"; // await FirebaseMessaging.instance.getToken();

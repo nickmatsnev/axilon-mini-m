@@ -37,12 +37,13 @@ import 'firebase_options.dart';
 // Этот метод будет вызван при получении FCM-сообщения, когда приложение в фоне или закрыто
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // Убедимся, что Firebase инициализирован
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  }
+
   print('🔔 Handling background message: ${message.messageId}');
 }
+
 
 Future<void> initFCM(BuildContext context) async {
   // 1) ask notifications permission
@@ -112,11 +113,6 @@ Future<void> initFCM(BuildContext context) async {
 }
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // 1) Инициализируем Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
 
   // 2) Устанавливаем Background-handler (приложение закрыто или в фоне)
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
