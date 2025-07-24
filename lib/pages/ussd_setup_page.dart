@@ -134,6 +134,16 @@ class UssdInfoData {
         description: 'Forward when line is engaged.',
         code: '**67*$target#',
       ),
+      UssdAction(
+        title: 'Forward all calls',
+        description: 'Always forward the calls to the assistant.',
+        code: '**21*$target#',
+      ),
+      UssdAction(
+        title: 'Cancel call forwarding',
+        description: 'If you wish to cancel call forwarding, use this option.',
+        code: '##21#',
+      ),
     ];
   }
 }

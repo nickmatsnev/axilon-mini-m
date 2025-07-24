@@ -166,5 +166,9 @@
   "Forward if you do not pick up within 20s.": "Переадресовать, если вы не ответите в течение 20 секунд.",
   "Forward when phone is off/out of coverage.": "Переадресовать, когда телефон выключен или вне зоны.",
   "Forward when line is engaged.": "Переадресовать, когда линия занята.",
-  "Go to Assistant selection": "Перейти к выбору ассистента"
+  "Go to Assistant selection": "Перейти к выбору ассистента",
+  "If you wish to cancel call forwarding, use this option.": "Если вы хотите выключить переадресацию, используйте эту опцию.",
+  "Always forward the calls to the assistant.": "Всегда переадресовывать звонки голосовому помощнику.",
+  "Forward all calls": "Все звонки",
+  "Cancel call forwarding": "Отменить переадресацию"
 }
